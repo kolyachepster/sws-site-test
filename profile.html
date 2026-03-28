@@ -292,25 +292,6 @@
                 return;
             }
             
-            // Проверяем подтверждение email
-            if (!user.emailVerified) {
-                profileContent.innerHTML = `
-                    <div class="error-container">
-                        <h2>📧 Email не подтверждён</h2>
-                        <p style="margin: 20px 0;">Пожалуйста, подтвердите свой email, перейдя по ссылке в письме, которое было отправлено при регистрации.</p>
-                        <p style="margin: 10px 0; color: #ffaa00;">Не получили письмо? Проверьте папку "Спам" или нажмите кнопку ниже.</p>
-                        <button id="resendEmailBtn" class="btn" style="background: #ffaa00; color: #ae0000;">Отправить письмо повторно</button>
-                        <a href="login.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">Выйти</a>
-                    </div>
-                `;
-                
-                document.getElementById('resendEmailBtn')?.addEventListener('click', async () => {
-                    await user.sendEmailVerification();
-                    alert('Письмо для подтверждения отправлено! Проверьте почту.');
-                });
-                return;
-            }
-            
             const userData = await window.firebase.getUserData(user.uid);
             const isAdmin = userData?.role === 'admin';
             
@@ -318,7 +299,7 @@
                 <div class="profile-layout">
                     <aside class="sidebar">
                         <img src="${userData?.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${userData?.nickname || user.email}`}" class="profile-avatar" onerror="this.src='https://via.placeholder.com/130/ae0000/ffffff'">
-                        <h2 id="u-nick">${escapeHtml(userData?.nickname || user.email?.split('@')[0])}</h2>
+                        <h2>${escapeHtml(userData?.nickname || user.email?.split('@')[0])}</h2>
                         <p style="color: var(--accent); font-size: 11px; font-weight: 800; margin-bottom: 20px;">${isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА"}</p>
                         
                         <div class="stat-grid">
@@ -498,7 +479,19 @@
             return div.innerHTML;
         }
         
-        document.addEventListener('DOMContentLoaded', loadProfile);
+        // Проверяем авторизацию при загрузке
+        if (!window.firebase?.getCurrentUser()) {
+            profileContent.innerHTML = `
+                <div class="error-container">
+                    <h2>🔐 Требуется авторизация</h2>
+                    <p style="margin: 20px 0;">Войдите в свой аккаунт, чтобы просмотреть профиль</p>
+                    <a href="login.html" class="btn" style="display: inline-block; text-decoration: none;">Войти</a>
+                    <a href="index.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">На главную</a>
+                </div>
+            `;
+        } else {
+            document.addEventListener('DOMContentLoaded', loadProfile);
+        }
     </script>
 </body>
 </html>

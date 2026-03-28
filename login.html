@@ -78,16 +78,6 @@
             display: none;
         }
         
-        .info-message {
-            color: #ffaa00;
-            font-size: 13px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(255,170,0,0.1);
-            border-radius: 8px;
-            display: none;
-        }
-        
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -128,7 +118,6 @@
             
             <div id="errorMsg" class="error-message"></div>
             <div id="successMsg" class="success-message"></div>
-            <div id="infoMsg" class="info-message"></div>
             
             <input type="email" id="email" placeholder="Email" autocomplete="email">
             <input type="password" id="password" placeholder="Пароль" autocomplete="current-password">
@@ -152,7 +141,6 @@
         const registerBtn = document.getElementById('registerBtn');
         const errorMsg = document.getElementById('errorMsg');
         const successMsg = document.getElementById('successMsg');
-        const infoMsg = document.getElementById('infoMsg');
         
         let isLoading = false;
         
@@ -160,7 +148,6 @@
             errorMsg.textContent = message;
             errorMsg.style.display = 'block';
             successMsg.style.display = 'none';
-            infoMsg.style.display = 'none';
             setTimeout(() => {
                 errorMsg.style.display = 'none';
             }, 5000);
@@ -170,20 +157,9 @@
             successMsg.textContent = message;
             successMsg.style.display = 'block';
             errorMsg.style.display = 'none';
-            infoMsg.style.display = 'none';
             setTimeout(() => {
                 successMsg.style.display = 'none';
-            }, 5000);
-        }
-        
-        function showInfo(message) {
-            infoMsg.textContent = message;
-            infoMsg.style.display = 'block';
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
-            setTimeout(() => {
-                infoMsg.style.display = 'none';
-            }, 5000);
+            }, 3000);
         }
         
         function setLoading(button, loading) {
@@ -242,7 +218,7 @@
             setLoading(registerBtn, false);
             
             if (result.success) {
-                showInfo('📧 Регистрация успешна! На вашу почту отправлено письмо для подтверждения. После подтверждения войдите снова.');
+                showSuccess('Регистрация успешна! Теперь войдите.');
                 emailInput.value = '';
                 passwordInput.value = '';
             } else {
@@ -252,7 +228,7 @@
         
         // Проверка авторизации - если уже залогинен, перенаправляем в профиль
         const user = window.firebase?.getCurrentUser();
-        if (user && user.emailVerified) {
+        if (user) {
             window.location.href = 'profile.html';
         }
     </script>
