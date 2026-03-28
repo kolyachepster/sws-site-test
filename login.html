@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - SWS</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: linear-gradient(135deg, #141417, #0b0b0d);
+            border-radius: 20px;
+            border: 1px solid #252529;
+            text-align: center;
+        }
+        
+        .login-container h2 {
+            color: #ae0000;
+            margin-bottom: 30px;
+        }
+        
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            background: #050506;
+            border: 1px solid #252529;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        .login-container input:focus {
+            border-color: #ae0000;
+        }
+        
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ae0000, #000000);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+        
+        .login-container button:hover {
+            transform: scale(1.02);
+        }
+        
+        .login-container .register-btn {
+            background: #222;
+        }
+        
+        .error-message {
+            color: #ff4444;
+            font-size: 12px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #44ff44;
+            font-size: 12px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ae0000;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation-buttons">
+            <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
+            <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
+            <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
+            <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="login-container">
+            <h2>🔐 Вход в SWS</h2>
+            
+            <div id="errorMsg" class="error-message"></div>
+            <div id="successMsg" class="success-message"></div>
+            
+            <input type="email" id="email" placeholder="Email" autocomplete="email">
+            <input type="password" id="password" placeholder="Пароль" autocomplete="current-password">
+            
+            <button id="loginBtn">Войти</button>
+            <button id="registerBtn" class="register-btn">Зарегистрироваться</button>
+            
+            <a href="index.html" class="back-link">← Вернуться на главную</a>
+        </div>
+    </div>
+    
+    <div class="container" style="margin-top: 20px; padding: 20px; text-align: center;">
+        <hr style="margin: 20px 0;">
+        <p style="font-size: 14px; color: #666;">© 2026 SWS - Sound Wave Studio. Все права защищены.</p>
+    </div>
+    
+    <script type="module">
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+        
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        loginBtn.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                showError('Заполните все поля');
+                return;
+            }
+            
+            const result = await window.firebase.login(email, password);
+            if (result.success) {
+                showSuccess('Вход выполнен! Перенаправление...');
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1000);
+            } else {
+                showError(result.error);
+            }
+        });
+        
+        registerBtn.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                showError('Заполните все поля');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Пароль должен быть не менее 6 символов');
+                return;
+            }
+            
+            const result = await window.firebase.register(email, password);
+            if (result.success) {
+                showSuccess('Регистрация успешна! Проверьте почту для подтверждения. Теперь войдите.');
+                emailInput.value = '';
+                passwordInput.value = '';
+            } else {
+                showError(result.error);
+            }
+        });
+        
+        // Проверка авторизации - если уже залогинен, перенаправляем в профиль
+        if (window.firebase?.getCurrentUser()) {
+            window.location.href = 'profile.html';
+        }
+    </script>
+</body>
+</html>

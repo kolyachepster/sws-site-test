@@ -100,6 +100,27 @@ async function updateProfile(uid, data) {
     await updateDoc(doc(db, "users", uid), data);
 }
 
+// ============ ФУНКЦИИ ДЛЯ ОБНОВЛЕНИЯ КНОПКИ ПРОФИЛЯ ============
+function updateProfileButton(user) {
+    const profileBtn = document.getElementById('navProfileBtn');
+    if (!profileBtn) return;
+    
+    if (user) {
+        // Пользователь авторизован - показываем кнопку с именем
+        getUserData(user.uid).then(userData => {
+            const displayName = userData?.nickname || user.email?.split('@')[0] || 'Профиль';
+            profileBtn.textContent = `👤 ${displayName}`;
+            profileBtn.style.display = 'inline-block';
+            profileBtn.href = 'profile.html';
+        });
+    } else {
+        // Пользователь не авторизован - показываем кнопку "Войти"
+        profileBtn.textContent = '🔑 Войти';
+        profileBtn.style.display = 'inline-block';
+        profileBtn.href = 'login.html';
+    }
+}
+
 // ============ ФУНКЦИИ ДЛЯ ТАЙТЛОВ ============
 async function getAllTitles() {
     const snap = await getDocs(collection(db, "titles"));
@@ -264,73 +285,29 @@ async function giveAchievement(email, achievement) {
     }
 }
 
-// ============ ФУНКЦИЯ ДЛЯ ИНИЦИАЛИЗАЦИИ БД (загрузка данных из JSON) ============
-async function initDatabaseFromJSON(jsonData) {
-    if (!isAdmin) return { success: false, error: "Нет прав" };
-    
-    try {
-        // Загрузка тайтлов
-        if (jsonData.titles) {
-            for (const title of jsonData.titles) {
-                await addDoc(collection(db, "titles"), title);
-            }
-        }
-        
-        // Загрузка команды
-        if (jsonData.team) {
-            for (const member of jsonData.team) {
-                await addDoc(collection(db, "team"), member);
-            }
-        }
-        
-        // Загрузка новостей
-        if (jsonData.news) {
-            for (const news of jsonData.news) {
-                await addDoc(collection(db, "news"), news);
-            }
-        }
-        
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-}
-
 // Слушатель авторизации
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
+    
+    // Обновляем кнопку профиля
+    updateProfileButton(user);
+    
     if (user) {
         const userData = await getUserData(user.uid);
         isAdmin = userData?.role === 'admin';
         
-        // Обновляем UI
-        const authBtn = document.getElementById('navAuthBtn');
-        const profileBtn = document.getElementById('navProfileBtn');
-        
-        if (authBtn) {
-            authBtn.textContent = `👤 ${userData?.nickname || user.email?.split('@')[0] || 'Профиль'}`;
-            authBtn.href = 'profile.html';
-        }
-        if (profileBtn) {
-            profileBtn.style.display = 'inline-block';
-        }
-        
-        // Показываем админ-панель
+        // Показываем админ-панель если есть
         const adminPanel = document.getElementById('admin-panel');
         if (adminPanel && isAdmin) {
             adminPanel.style.display = 'block';
         }
     } else {
         isAdmin = false;
-        const authBtn = document.getElementById('navAuthBtn');
-        const profileBtn = document.getElementById('navProfileBtn');
         
-        if (authBtn) {
-            authBtn.textContent = '🔑 Войти';
-            authBtn.href = 'login.html';
-        }
-        if (profileBtn) {
-            profileBtn.style.display = 'none';
+        // Скрываем админ-панель
+        const adminPanel = document.getElementById('admin-panel');
+        if (adminPanel) {
+            adminPanel.style.display = 'none';
         }
     }
 });
@@ -361,7 +338,7 @@ window.firebase = {
     searchTitles,
     searchTeam,
     giveAchievement,
-    initDatabaseFromJSON
+    updateProfileButton
 };
 
 console.log('✅ Firebase инициализирован');

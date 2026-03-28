@@ -5,9 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профиль - SWS</title>
     <link rel="stylesheet" href="style.css">
-    <script src="data.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <style>
+        :root {
+            --bg: #0b0b0d;
+            --card-bg: #141417;
+            --input-bg: #050506;
+            --accent: #ff2e2e;
+            --text: #ffffff;
+            --text-dim: #9ca3af;
+            --border: #252529;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            padding: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .nav-button {
+            background: linear-gradient(135deg, #ae0000 0%, #000000 100%);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .nav-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ae0000;
+        }
+        
+        .title {
+            color: #ae0000;
+            font-size: 32px;
+            margin: 20px 0;
+        }
+        
         .profile-layout {
             display: grid;
             grid-template-columns: 300px 1fr;
@@ -23,12 +85,12 @@
             height: fit-content;
         }
         
-        .avatar {
+        .profile-avatar {
             width: 130px;
             height: 130px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--border);
+            border: 4px solid #ae0000;
             margin-bottom: 15px;
         }
         
@@ -105,10 +167,10 @@
             background: #3897f0;
         }
         
-        .auth-container {
-            max-width: 380px;
-            margin: 40px auto;
-            text-align: center;
+        .btn-logout {
+            background: #222;
+            margin-top: 20px;
+            width: 100%;
         }
         
         input, select {
@@ -120,61 +182,6 @@
             border-radius: 10px;
             margin-bottom: 15px;
             outline: none;
-        }
-        
-        :root {
-            --bg: #0b0b0d;
-            --card-bg: #141417;
-            --input-bg: #050506;
-            --accent: #ff2e2e;
-            --text: #ffffff;
-            --text-dim: #9ca3af;
-            --border: #252529;
-        }
-        
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        
-        .navigation-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            padding: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .nav-button {
-            background: linear-gradient(135deg, #ae0000 0%, #000000 100%);
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .nav-button:hover {
-            transform: scale(1.05);
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .title {
-            color: var(--accent);
-            font-size: 32px;
-            margin: 20px 0;
         }
         
         hr {
@@ -214,84 +221,16 @@
     <div class="container">
         <div class="header">
             <a href="index.html">
-                <img src="logo.jpg" alt="Логотип SWS" class="avatar" width="120" height="120" onerror="this.src='https://via.placeholder.com/120/ae0000/ffffff?text=SWS'">
+                <img src="logo.jpg" alt="Логотип SWS" class="avatar" onerror="this.src='https://via.placeholder.com/120/ae0000/ffffff?text=SWS'">
             </a>
             <h1 class="title">Мой профиль</h1>
             <hr>
         </div>
         
-        <div class="content-box">
-            <div id="auth-ui" class="auth-container">
-                <h2 style="margin-bottom:20px">Вход в SWS</h2>
-                <input type="email" id="a-email" placeholder="Email">
-                <input type="password" id="a-pass" placeholder="Пароль">
-                <button class="btn" style="width:100%" id="btn-login">Войти</button>
-                <button class="btn" style="width:100%; margin-top:10px; background:#222" id="btn-reg">Регистрация</button>
-            </div>
-
-            <div id="user-ui" class="profile-layout" style="display: none;">
-                <aside class="sidebar">
-                    <img src="" id="u-ava" class="avatar">
-                    <h2 id="u-nick">...</h2>
-                    <p id="u-role-text" style="color:var(--accent); font-size:11px; font-weight:800; margin-bottom:20px"></p>
-                    
-                    <div class="stat-grid">
-                        <div class="stat-card">
-                            <span class="stat-val" id="s-views">0</span>
-                            <span class="stat-lab">Проектов</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-val" id="s-date">--</span>
-                            <span class="stat-lab">Рег.</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ach-list" id="u-ach-box"></div>
-                    <button class="btn" style="width:100%; margin-top:30px; background:#222" id="btn-logout">Выход</button>
-                </aside>
-
-                <div class="main-content">
-                    <div class="info-block">
-                        <h3 style="margin-bottom:20px">Настройки профиля</h3>
-                        <input type="text" id="set-nick" placeholder="Никнейм">
-                        <input type="text" id="set-ava" placeholder="URL аватара">
-                        <button class="btn" id="save-profile">Сохранить изменения</button>
-                    </div>
-
-                    <div id="admin-panel" class="info-block" style="display: none; border-color: #3897f0;">
-                        <h3 style="color: #3897f0; margin-bottom: 20px;">Консоль Администратора</h3>
-                        
-                        <div style="background: #000; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
-                            <h4 style="margin-bottom:10px">Выдать достижение</h4>
-                            <input type="text" id="ach-user-email" placeholder="Email пользователя">
-                            <select id="ach-select">
-                                <option value="🚀 Первооткрыватель">🚀 Первооткрыватель</option>
-                                <option value="💎 Спонсор Проекта">💎 Спонсор Проекта</option>
-                                <option value="🎙️ Золотой Голос">🎙️ Золотой Голос</option>
-                                <option value="CUSTOM">-- Своё достижение --</option>
-                            </select>
-                            <input type="text" id="ach-custom" placeholder="Текст своего достижения" style="display:none">
-                            <button class="btn btn-admin" id="btn-give-ach">Выдать ачивку</button>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div>
-                                <h4>+ Тайтл</h4>
-                                <input type="text" id="t-name" placeholder="Название">
-                                <input type="text" id="t-img" placeholder="URL обложки">
-                                <input type="text" id="t-link" placeholder="Ссылка на видео">
-                                <button class="btn btn-admin" id="add-title">Добавить</button>
-                            </div>
-                            <div>
-                                <h4>+ В команду</h4>
-                                <input type="text" id="m-name" placeholder="Никнейм">
-                                <input type="text" id="m-role" placeholder="Роль">
-                                <input type="text" id="m-img" placeholder="URL фото">
-                                <button class="btn btn-admin" id="add-member">Добавить</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="content-box" id="profileContent">
+            <div class="loading" style="text-align: center; padding: 50px;">
+                <div style="border: 5px solid #f3f3f3; border-top: 5px solid #ae0000; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto;"></div>
+                <p>Загрузка профиля...</p>
             </div>
         </div>
     </div>
@@ -307,119 +246,167 @@
         <p style="font-size: 14px; color: #666;">© 2026 SWS - Sound Wave Studio. Все права защищены.</p>
     </div>
 
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
     <script type="module">
-        const authUI = document.getElementById('auth-ui');
-        const userUI = document.getElementById('user-ui');
+        const profileContent = document.getElementById('profileContent');
         
-        // Функции для работы с профилем
-        async function loadUserProfile() {
+        async function loadProfile() {
             const user = window.firebase?.getCurrentUser();
-            if (!user) return;
+            
+            if (!user) {
+                profileContent.innerHTML = `
+                    <div class="login-container" style="max-width: 400px; margin: 0 auto; text-align: center; padding: 40px;">
+                        <h2 style="color: #ae0000;">🔐 Требуется авторизация</h2>
+                        <p style="margin: 20px 0;">Войдите в свой аккаунт, чтобы просмотреть профиль</p>
+                        <a href="login.html" class="btn" style="display: inline-block; text-decoration: none;">Войти</a>
+                        <a href="index.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">На главную</a>
+                    </div>
+                `;
+                return;
+            }
             
             const userData = await window.firebase.getUserData(user.uid);
-            if (!userData) return;
+            const isAdmin = userData?.role === 'admin';
             
-            document.getElementById('u-nick').innerText = userData.nickname || user.email;
-            document.getElementById('u-ava').src = userData.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${userData.nickname}`;
-            document.getElementById('s-views').innerText = userData.views || 0;
-            document.getElementById('s-date').innerText = userData.regDate || "--";
-            document.getElementById('u-role-text').innerText = userData.role === 'admin' ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА";
+            profileContent.innerHTML = `
+                <div class="profile-layout">
+                    <aside class="sidebar">
+                        <img src="${userData?.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${userData?.nickname || user.email}`}" class="profile-avatar" onerror="this.src='https://via.placeholder.com/130/ae0000/ffffff'">
+                        <h2 id="u-nick">${userData?.nickname || user.email?.split('@')[0]}</h2>
+                        <p style="color: var(--accent); font-size: 11px; font-weight: 800; margin-bottom: 20px;">${isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА"}</p>
+                        
+                        <div class="stat-grid">
+                            <div class="stat-card">
+                                <span class="stat-val" id="s-views">${userData?.views || 0}</span>
+                                <span class="stat-lab">Проектов</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-val" id="s-date">${userData?.regDate || "--"}</span>
+                                <span class="stat-lab">Рег.</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ach-list" id="u-ach-box">
+                            ${isAdmin ? '<span class="badge gold">🛡️ Основатель</span>' : ''}
+                            ${userData?.achievements?.map(a => `<span class="badge">${a}</span>`).join('') || ''}
+                        </div>
+                        
+                        <button class="btn btn-logout" id="btn-logout">Выход</button>
+                    </aside>
+                    
+                    <div class="main-content">
+                        <div class="info-block">
+                            <h3 style="margin-bottom:20px">Настройки профиля</h3>
+                            <input type="text" id="set-nick" placeholder="Никнейм" value="${userData?.nickname || ''}">
+                            <input type="text" id="set-ava" placeholder="URL аватара" value="${userData?.avatar || ''}">
+                            <button class="btn" id="save-profile">Сохранить изменения</button>
+                        </div>
+                        
+                        ${isAdmin ? `
+                        <div id="admin-panel" class="info-block" style="border-color: #3897f0;">
+                            <h3 style="color: #3897f0; margin-bottom: 20px;">🛠️ Консоль Администратора</h3>
+                            
+                            <div style="background: #000; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                                <h4 style="margin-bottom:10px">🎖️ Выдать достижение</h4>
+                                <input type="text" id="ach-user-email" placeholder="Email пользователя">
+                                <select id="ach-select">
+                                    <option value="🚀 Первооткрыватель">🚀 Первооткрыватель</option>
+                                    <option value="💎 Спонсор Проекта">💎 Спонсор Проекта</option>
+                                    <option value="🎙️ Золотой Голос">🎙️ Золотой Голос</option>
+                                    <option value="CUSTOM">-- Своё достижение --</option>
+                                </select>
+                                <input type="text" id="ach-custom" placeholder="Текст своего достижения" style="display:none">
+                                <button class="btn btn-admin" id="btn-give-ach">Выдать ачивку</button>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div>
+                                    <h4>➕ Добавить тайтл</h4>
+                                    <input type="text" id="t-name" placeholder="Название">
+                                    <input type="text" id="t-img" placeholder="URL обложки">
+                                    <input type="text" id="t-link" placeholder="Ссылка на видео">
+                                    <button class="btn btn-admin" id="add-title">Добавить</button>
+                                </div>
+                                <div>
+                                    <h4>➕ Добавить в команду</h4>
+                                    <input type="text" id="m-name" placeholder="Никнейм">
+                                    <input type="text" id="m-role" placeholder="Роль">
+                                    <input type="text" id="m-img" placeholder="URL фото">
+                                    <button class="btn btn-admin" id="add-member">Добавить</button>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
             
-            const box = document.getElementById('u-ach-box');
-            box.innerHTML = '';
-            if (userData.role === 'admin') {
-                box.innerHTML += '<span class="badge gold">🛡️ Основатель</span>';
-            }
-            userData.achievements?.forEach(a => {
-                box.innerHTML += `<span class="badge">${a}</span>`;
-            });
-        }
-        
-        // Кнопки авторизации
-        document.getElementById('btn-login')?.addEventListener('click', async () => {
-            const email = document.getElementById('a-email').value;
-            const pass = document.getElementById('a-pass').value;
-            const result = await window.firebase.login(email, pass);
-            if (!result.success) alert(result.error);
-        });
-        
-        document.getElementById('btn-reg')?.addEventListener('click', async () => {
-            const email = document.getElementById('a-email').value;
-            const pass = document.getElementById('a-pass').value;
-            const result = await window.firebase.register(email, pass);
-            if (result.success) {
-                alert("Проверьте почту для подтверждения!");
-            } else {
-                alert(result.error);
-            }
-        });
-        
-        document.getElementById('btn-logout')?.addEventListener('click', async () => {
-            await window.firebase.logout();
-            location.reload();
-        });
-        
-        document.getElementById('save-profile')?.addEventListener('click', async () => {
-            const user = window.firebase?.getCurrentUser();
-            if (user) {
+            // Привязываем обработчики
+            document.getElementById('save-profile')?.addEventListener('click', async () => {
                 await window.firebase.updateProfile(user.uid, {
                     nickname: document.getElementById('set-nick').value,
                     avatar: document.getElementById('set-ava').value
                 });
                 alert("Сохранено!");
-                loadUserProfile();
-            }
-        });
-        
-        // Админ-функции
-        document.getElementById('ach-select')?.addEventListener('change', (e) => {
-            document.getElementById('ach-custom').style.display = e.target.value === 'CUSTOM' ? 'block' : 'none';
-        });
-        
-        document.getElementById('btn-give-ach')?.addEventListener('click', async () => {
-            const email = document.getElementById('ach-user-email').value;
-            let ach = document.getElementById('ach-select').value;
-            if (ach === 'CUSTOM') ach = document.getElementById('ach-custom').value;
-            const result = await window.firebase.giveAchievement(email, ach);
-            alert(result.success ? "Достижение выдано!" : result.error);
-        });
-        
-        document.getElementById('add-title')?.addEventListener('click', async () => {
-            const result = await window.firebase.addTitle({
-                name: document.getElementById('t-name').value,
-                img: document.getElementById('t-img').value,
-                link: document.getElementById('t-link').value
+                loadProfile();
             });
-            alert(result.success ? "Тайтл добавлен!" : result.error);
-        });
-        
-        document.getElementById('add-member')?.addEventListener('click', async () => {
-            const result = await window.firebase.addTeamMember({
-                name: document.getElementById('m-name').value,
-                role: document.getElementById('m-role').value,
-                img: document.getElementById('m-img').value
+            
+            document.getElementById('btn-logout')?.addEventListener('click', async () => {
+                await window.firebase.logout();
+                window.location.href = 'index.html';
             });
-            alert(result.success ? "Участник добавлен!" : result.error);
-        });
-        
-        // Слушатель авторизации
-        window.firebase?.auth?.onAuthStateChanged(async (user) => {
-            if (user) {
-                authUI.style.display = 'none';
-                userUI.style.display = 'grid';
-                await loadUserProfile();
+            
+            if (isAdmin) {
+                document.getElementById('ach-select')?.addEventListener('change', (e) => {
+                    document.getElementById('ach-custom').style.display = e.target.value === 'CUSTOM' ? 'block' : 'none';
+                });
                 
-                const userData = await window.firebase.getUserData(user.uid);
-                const isAdmin = userData?.role === 'admin';
-                const adminPanel = document.getElementById('admin-panel');
-                if (adminPanel) {
-                    adminPanel.style.display = isAdmin ? 'block' : 'none';
-                }
-            } else {
-                authUI.style.display = 'block';
-                userUI.style.display = 'none';
+                document.getElementById('btn-give-ach')?.addEventListener('click', async () => {
+                    const email = document.getElementById('ach-user-email').value;
+                    let ach = document.getElementById('ach-select').value;
+                    if (ach === 'CUSTOM') ach = document.getElementById('ach-custom').value;
+                    const result = await window.firebase.giveAchievement(email, ach);
+                    alert(result.success ? "Достижение выдано!" : result.error);
+                });
+                
+                document.getElementById('add-title')?.addEventListener('click', async () => {
+                    const result = await window.firebase.addTitle({
+                        name: document.getElementById('t-name').value,
+                        image: document.getElementById('t-img').value,
+                        videoUrl: document.getElementById('t-link').value
+                    });
+                    alert(result.success ? "Тайтл добавлен!" : result.error);
+                    if (result.success) {
+                        document.getElementById('t-name').value = '';
+                        document.getElementById('t-img').value = '';
+                        document.getElementById('t-link').value = '';
+                    }
+                });
+                
+                document.getElementById('add-member')?.addEventListener('click', async () => {
+                    const result = await window.firebase.addTeamMember({
+                        name: document.getElementById('m-name').value,
+                        status: document.getElementById('m-role').value,
+                        image: document.getElementById('m-img').value,
+                        categories: ['main']
+                    });
+                    alert(result.success ? "Участник добавлен!" : result.error);
+                    if (result.success) {
+                        document.getElementById('m-name').value = '';
+                        document.getElementById('m-role').value = '';
+                        document.getElementById('m-img').value = '';
+                    }
+                });
             }
-        });
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadProfile);
     </script>
 </body>
 </html>
