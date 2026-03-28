@@ -258,7 +258,7 @@
         <div class="content-box" id="profileContent">
             <div style="text-align: center; padding: 50px;">
                 <div class="loading-spinner"></div>
-                <p>Загрузка профиля...</p>
+                <p>Проверка авторизации...</p>
             </div>
         </div>
     </div>
@@ -277,20 +277,9 @@
     <script type="module">
         const profileContent = document.getElementById('profileContent');
         
-        async function loadProfile() {
-            const user = window.firebase?.getCurrentUser();
-            
-            if (!user) {
-                profileContent.innerHTML = `
-                    <div class="error-container">
-                        <h2>🔐 Требуется авторизация</h2>
-                        <p style="margin: 20px 0;">Войдите в свой аккаунт, чтобы просмотреть профиль</p>
-                        <a href="login.html" class="btn" style="display: inline-block; text-decoration: none;">Войти</a>
-                        <a href="index.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">На главную</a>
-                    </div>
-                `;
-                return;
-            }
+        // Функция для отображения профиля
+        async function displayProfile(user) {
+            console.log("Отображаем профиль для:", user?.email);
             
             const userData = await window.firebase.getUserData(user.uid);
             const isAdmin = userData?.role === 'admin';
@@ -378,7 +367,7 @@
                     avatar: newAvatar
                 });
                 alert("Сохранено!");
-                loadProfile();
+                displayProfile(user);
             });
             
             document.getElementById('btn-logout')?.addEventListener('click', async () => {
@@ -479,19 +468,25 @@
             return div.innerHTML;
         }
         
-        // Проверяем авторизацию при загрузке
-        if (!window.firebase?.getCurrentUser()) {
-            profileContent.innerHTML = `
-                <div class="error-container">
-                    <h2>🔐 Требуется авторизация</h2>
-                    <p style="margin: 20px 0;">Войдите в свой аккаунт, чтобы просмотреть профиль</p>
-                    <a href="login.html" class="btn" style="display: inline-block; text-decoration: none;">Войти</a>
-                    <a href="index.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">На главную</a>
-                </div>
-            `;
-        } else {
-            document.addEventListener('DOMContentLoaded', loadProfile);
-        }
+        // Ждём изменения состояния авторизации
+        window.firebase?.auth?.onAuthStateChanged(async (user) => {
+            console.log("profile.html: onAuthStateChanged, user:", user?.email);
+            
+            if (user) {
+                // Пользователь авторизован - показываем профиль
+                await displayProfile(user);
+            } else {
+                // Пользователь не авторизован - показываем форму входа
+                profileContent.innerHTML = `
+                    <div class="error-container">
+                        <h2>🔐 Требуется авторизация</h2>
+                        <p style="margin: 20px 0;">Войдите в свой аккаунт, чтобы просмотреть профиль</p>
+                        <a href="login.html" class="btn" style="display: inline-block; text-decoration: none;">Войти</a>
+                        <a href="index.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">На главную</a>
+                    </div>
+                `;
+            }
+        });
     </script>
 </body>
 </html>

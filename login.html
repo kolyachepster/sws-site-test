@@ -142,8 +142,6 @@
         const errorMsg = document.getElementById('errorMsg');
         const successMsg = document.getElementById('successMsg');
         
-        let isLoading = false;
-        
         function showError(message) {
             errorMsg.textContent = message;
             errorMsg.style.display = 'block';
@@ -221,14 +219,20 @@
                 showSuccess('Регистрация успешна! Теперь войдите.');
                 emailInput.value = '';
                 passwordInput.value = '';
+                // После регистрации автоматически входим
+                setTimeout(async () => {
+                    const loginResult = await window.firebase.login(email, password);
+                    if (loginResult.success) {
+                        window.location.href = 'profile.html';
+                    }
+                }, 1000);
             } else {
                 showError(result.error);
             }
         });
         
-        // Проверка авторизации - если уже залогинен, перенаправляем в профиль
-        const user = window.firebase?.getCurrentUser();
-        if (user) {
+        // Если уже залогинены - идём в профиль
+        if (window.firebase?.getCurrentUser()) {
             window.location.href = 'profile.html';
         }
     </script>

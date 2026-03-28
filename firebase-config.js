@@ -5,7 +5,7 @@ import {
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, 
     signOut, 
-    onAuthStateChanged
+    onAuthStateChanged 
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { 
     getFirestore, 
@@ -52,8 +52,10 @@ function isUserAdmin() {
 async function login(email, password) {
     try {
         const result = await signInWithEmailAndPassword(auth, email, password);
+        console.log("✅ Вход выполнен:", result.user.email);
         return { success: true, user: result.user };
     } catch (error) {
+        console.error("❌ Ошибка входа:", error.message);
         return { success: false, error: error.message };
     }
 }
@@ -61,6 +63,7 @@ async function login(email, password) {
 async function register(email, password) {
     try {
         const result = await createUserWithEmailAndPassword(auth, email, password);
+        console.log("✅ Регистрация успешна:", result.user.email);
         
         // Создаём запись в Firestore
         await setDoc(doc(db, "users", result.user.uid), {
@@ -75,6 +78,7 @@ async function register(email, password) {
         
         return { success: true, user: result.user };
     } catch (error) {
+        console.error("❌ Ошибка регистрации:", error.message);
         return { success: false, error: error.message };
     }
 }
@@ -82,8 +86,10 @@ async function register(email, password) {
 async function logout() {
     try {
         await signOut(auth);
+        console.log("✅ Выход выполнен");
         return { success: true };
     } catch (error) {
+        console.error("❌ Ошибка выхода:", error.message);
         return { success: false, error: error.message };
     }
 }
@@ -288,8 +294,9 @@ async function giveAchievement(email, achievement) {
     }
 }
 
-// Слушатель авторизации
+// Слушатель авторизации - ОБНОВЛЯЕМ ГЛОБАЛЬНУЮ ПЕРЕМЕННУЮ
 onAuthStateChanged(auth, async (user) => {
+    console.log("🔄 onAuthStateChanged вызван, user:", user?.email || "не авторизован");
     currentUser = user;
     
     // Обновляем кнопку профиля
@@ -298,6 +305,7 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userData = await getUserData(user.uid);
         isAdmin = userData?.role === 'admin';
+        console.log("👤 Пользователь:", user.email, "Админ:", isAdmin);
         
         // Показываем админ-панель если есть
         const adminPanel = document.getElementById('admin-panel');
@@ -306,6 +314,7 @@ onAuthStateChanged(auth, async (user) => {
         }
     } else {
         isAdmin = false;
+        console.log("👤 Пользователь не авторизован");
         
         // Скрываем админ-панель
         const adminPanel = document.getElementById('admin-panel');
