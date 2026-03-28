@@ -1,0 +1,162 @@
+{
+  "titles": [
+    {
+      "id": "attack_on_titan",
+      "name": "Атака Титанов",
+      "name_en": "Attack on Titan",
+      "image": "aot.jpg",
+      "poster": "aot-poster.jpg",
+      "type": "completed",
+      "status": "Завершён",
+      "year": 2023,
+      "episodes_count": 87,
+      "seasons": 4,
+      "rating": 9.0,
+      "genres": ["Экшн", "Драма", "Фэнтези"],
+      "description": "Эпическая история о борьбе человечества с гигантскими титанами.",
+      "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239001&hash=1b3f5a7e9d2c4b8a",
+      "characters": [
+        {"name": "Эрен Йегер", "name_en": "Eren Yeager", "voiceId": "raskolnikov", "voiceName": "Раскольников", "image": "eren.jpg"},
+        {"name": "Леви Аккерман", "name_en": "Levi Ackerman", "voiceId": "dnt", "voiceName": "DNT", "image": "levi.jpg"},
+        {"name": "Армин Арлерт", "name_en": "Armin Arlert", "voiceId": "spartans", "voiceName": "Юный Спартанец", "image": "armin.jpg"}
+      ],
+      "episodes": [
+        {"number": 1, "title": "Твой дом", "title_en": "To You, in 2000 Years", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239001&hash=1b3f5a7e9d2c4b8a", "isAvailable": true, "hasSkip": true, "skipText": "Skip Opening (00:00 - 01:30)"},
+        {"number": 2, "title": "Этот день", "title_en": "That Day", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239002&hash=2c4g6b8f0e3d5c9b", "isAvailable": true, "hasSkip": true, "skipText": "Skip Opening (00:00 - 01:28)"},
+        {"number": 3, "title": "Блестящие тени", "title_en": "A Dim Light Amid Despair", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239003&hash=3d5h7c9g1f4e6d0c", "isAvailable": true, "hasSkip": true, "skipText": "Skip Opening (00:00 - 01:32)"},
+        {"number": 4, "title": "Ночь битвы", "title_en": "The Night of the Closing Ceremony", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239004&hash=4e6i8d0h2g5f7e1d", "isAvailable": true, "hasSkip": false, "skipText": ""},
+        {"number": 5, "title": "Первый шаг", "title_en": "First Battle", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239005&hash=5f7j9e1i3h6g8f2e", "isAvailable": true, "hasSkip": false, "skipText": ""},
+        {"number": 6, "title": "Рассвет", "title_en": "The World the Girl Saw", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239006&hash=6g8k0f2j4i7h9g3f", "isAvailable": true, "hasSkip": true, "skipText": "Skip Opening (00:00 - 01:35)"}
+      ]
+    },
+    {
+      "id": "demon_slayer",
+      "name": "Клинок, рассекающий демонов",
+      "name_en": "Demon Slayer: Kimetsu no Yaiba",
+      "image": "ds.jpg",
+      "poster": "ds-poster.jpg",
+      "type": "completed",
+      "status": "Завершён",
+      "year": 2024,
+      "episodes_count": 55,
+      "seasons": 4,
+      "rating": 8.9,
+      "genres": ["Экшн", "Фэнтези", "Драма"],
+      "description": "История юноши по имени Тандзиро Камадо, который становится охотником на демонов.",
+      "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239101&hash=7h9l1g3k5j8i0h4g",
+      "characters": [
+        {"name": "Тандзиро Камадо", "name_en": "Tanjiro Kamado", "voiceId": "chep", "voiceName": "chep", "image": "tanjiro.jpg"},
+        {"name": "Нэзуко Камадо", "name_en": "Nezuko Kamado", "voiceId": "nezuko", "voiceName": "Nezuko-va", "image": "nezuko.jpg"}
+      ],
+      "episodes": [
+        {"number": 1, "title": "Жестокость", "title_en": "Cruelty", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239101&hash=7h9l1g3k5j8i0h4g", "isAvailable": true, "hasSkip": true, "skipText": "Skip Opening (00:00 - 01:30)"}
+      ]
+    },
+    {
+      "id": "jujutsu_kaisen",
+      "name": "Магическая битва",
+      "name_en": "Jujutsu Kaisen",
+      "image": "jjk.jpg",
+      "poster": "jjk-poster.jpg",
+      "type": "ongoing",
+      "status": "Онгоинг",
+      "year": 2025,
+      "episodes_count": 47,
+      "seasons": 2,
+      "rating": 8.8,
+      "genres": ["Экшн", "Сверхъестественное", "Фэнтези"],
+      "description": "Студент Юдзи Итадори проглатывает палец проклятия и становится охотником на проклятия.",
+      "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239201&hash=8i0m2h4l6k9j1i5h",
+      "characters": [
+        {"name": "Юдзи Итадори", "name_en": "Yuji Itadori", "voiceId": "chep", "voiceName": "chep", "image": "yuji.jpg"},
+        {"name": "Годзё Сатору", "name_en": "Satoru Gojo", "voiceId": "raskolnikov", "voiceName": "Раскольников", "image": "gojo.jpg"}
+      ],
+      "episodes": [
+        {"number": 1, "title": "Сильный", "title_en": "Ryomen Sukuna", "videoUrl": "https://vk.com/video_ext.php?oid=-123456789&id=456239201&hash=8i0m2h4l6k9j1i5h", "isAvailable": true, "hasSkip": true, "skipText": "Skip Opening (00:00 - 01:30)"}
+      ]
+    }
+  ],
+  "team": [
+    {
+      "id": "raskolnikov",
+      "name": "Раскольников",
+      "name_en": "Raskolnikov",
+      "image": "ава-raskolnikov.jpg",
+      "status": "🎭 Владелец, актёр дубляжа",
+      "joinDate": "2020",
+      "bio": "Основатель и владелец студии SWS. Занимаюсь дубляжом с 2020 года.",
+      "categories": ["main"],
+      "social": {"telegram": "@raskolnikov_va", "vk": "raskolnikov_va"}
+    },
+    {
+      "id": "dnt",
+      "name": "DNT",
+      "name_en": "DNT",
+      "image": "ава-dnt.jpg",
+      "status": "🎭 Совладелец, сводчик, актёр дубляжа",
+      "joinDate": "2020",
+      "bio": "Совладелец студии, занимаюсь сведением звука и озвучкой.",
+      "categories": ["main", "tech"],
+      "social": {"telegram": "@dnt_va", "github": "dnt-voice"}
+    },
+    {
+      "id": "spartans",
+      "name": "Юный Спартанец",
+      "name_en": "Young Spartan",
+      "image": "ава-spart.jpg",
+      "status": "🎭 Совладелец, сводчик, актёр дубляжа",
+      "joinDate": "2021",
+      "bio": "Совладелец студии. Занимаюсь сведением и озвучкой.",
+      "categories": ["main", "tech"],
+      "social": {"telegram": "@young_spartans", "vk": "young_spartans"}
+    },
+    {
+      "id": "chep",
+      "name": "chep",
+      "name_en": "chep",
+      "image": "ава-chep.jpg",
+      "status": "🎙️ Актёр дубляжа, разработчик",
+      "joinDate": "2021",
+      "bio": "Актёр дубляжа и разработчик сайта.",
+      "categories": ["main", "tech"],
+      "social": {"telegram": "@chep_va", "github": "chep-voice"}
+    },
+    {
+      "id": "doza_narkoza",
+      "name": "Doza_Narkoza",
+      "name_en": "Doza_Narkoza",
+      "image": "ава-doza.jpg",
+      "status": "🎙️ Актёр дубляжа",
+      "joinDate": "2022",
+      "bio": "Актёр дубляжа. Специализируюсь на драматических ролях.",
+      "categories": ["main"],
+      "social": {"telegram": "@doza_va"}
+    }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "title": "🎉 Добро пожаловать на новый сайт SWS!",
+      "title_en": "Welcome to the new SWS website!",
+      "date": "2026-03-26",
+      "category": "event",
+      "image": "https://via.placeholder.com/800x400/ae0000/ffffff?text=SWS+News",
+      "excerpt": "Мы рады представить вам наш новый официальный сайт! Здесь вы найдёте все наши проекты, сможете следить за новостями и обновлениями.",
+      "content": "<p>Дорогие друзья и поклонники нашей студии!</p><p>С огромной радостью представляем вам наш новый официальный сайт. Это событие стало важным шагом в развитии SWS. Теперь у вас есть единое место, где можно следить за новостями студии, смотреть все наши проекты, узнавать о новых тайтлах и знакомиться с нашей командой.</p><p>Сайт будет постоянно обновляться. Мы будем добавлять новые функции и улучшать интерфейс. Спасибо, что вы с нами!</p><p>С уважением,<br>Команда SWS</p>",
+      "views": 156,
+      "author": "Администрация"
+    },
+    {
+      "id": 2,
+      "title": "🎬 Атака Титанов - первый сезон в работе!",
+      "title_en": "Attack on Titan - first season in progress!",
+      "date": "2026-03-25",
+      "category": "announcement",
+      "image": "https://via.placeholder.com/800x400/ae0000/ffffff?text=Attack+on+Titan",
+      "excerpt": "Начинаем озвучку культового аниме \"Атака Титанов\". Первые серии уже в работе и скоро будут доступны!",
+      "content": "<p>Уважаемые зрители!</p><p>Мы рады сообщить, что начинаем работу над одним из самых ожидаемых проектов - \"Атака Титанов\" (Attack on Titan).</p><p>На данный момент в работе находятся первые 6 серий первого сезона. Мы тщательно подбираем голоса для каждого персонажа, чтобы передать всю глубину и эмоциональность этого великолепного аниме.</p><p><strong>Планируемые сроки:</strong></p><ul><li>1 серия - уже доступна</li><li>2-3 серии - на финальной стадии озвучки</li><li>4-6 серии - в процессе записи</li></ul><p>Следите за обновлениями! Все новые серии будут появляться на сайте сразу после выхода.</p>",
+      "views": 89,
+      "author": "Раскольников"
+    }
+  ]
+}

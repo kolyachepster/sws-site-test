@@ -1,0 +1,464 @@
+/* ========== ОБЩИЕ СТИЛИ ========== */
+body { 
+    background: url(background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: rgb(200, 200, 200);
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.avatar {
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    max-width: 100%;
+    height: auto;
+}
+
+.title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 23px;
+    color: #333;
+    margin: 20px 0 10px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.text, p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    line-height: 1.5;
+}
+
+.content-box {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #666, transparent);
+    margin: 25px 0;
+}
+
+/* ========== КНОПКИ НАВИГАЦИИ ========== */
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 40px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,240,255,0.9));
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    max-width: 100%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    flex: 1;
+    text-align: center;
+    word-break: break-word;
+}
+
+.nav-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* ========== КАРТОЧКИ ДЛЯ ТАЙТЛОВ ========== */
+.titles-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.title-card {
+    width: 200px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #eee;
+}
+
+.title-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.title-card-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+}
+
+.title-card-info {
+    padding: 12px;
+}
+
+.title-card-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #ae0000;
+}
+
+.title-card-meta {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* ========== КАРТОЧКИ ДЛЯ КОМАНДЫ ========== */
+.team-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.team-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 15px;
+    padding: 20px 15px;
+    width: 200px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.team-card-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ae0000;
+    margin-bottom: 15px;
+}
+
+.team-card-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ae0000;
+    margin: 0 0 10px 0;
+}
+
+.team-card-roles {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+.team-card-popular {
+    font-size: 13px;
+    color: #666;
+    background: rgba(0, 26, 140, 0.1);
+    padding: 5px;
+    border-radius: 8px;
+    margin: 10px 0 0 0;
+}
+
+/* ========== СПИСОК СЕРИЙ ========== */
+.episodes-list {
+    margin-top: 30px;
+}
+
+.episode-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.episode-item:hover {
+    background: rgba(255,255,255,1);
+}
+
+.episode-number {
+    font-weight: bold;
+    color: #001a8c;
+    min-width: 60px;
+    font-size: 16px;
+}
+
+.episode-title {
+    flex: 1;
+    color: #333;
+    font-size: 16px;
+}
+
+.episode-status {
+    background: #4CAF50;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.episode-button {
+    background: #001a8c;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.episode-button:hover {
+    background: #320063;
+}
+
+/* ========== БЛОК ПЕРСОНАЖЕЙ ========== */
+.characters-section {
+    margin-top: 40px;
+}
+
+.characters-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.character-card {
+    width: 180px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    padding-bottom: 15px;
+}
+
+.character-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.character-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    color: #001a8c;
+}
+
+.character-va {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.character-va-link {
+    color: #320063;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.character-va-link:hover {
+    text-decoration: underline;
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .avatar {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .title {
+        font-size: 24px;
+    }
+    
+    .text, p {
+        font-size: 16px;
+    }
+    
+    .navigation-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;
+        gap: 12px;
+        margin: 20px 0;
+    }
+    
+    .nav-button {
+        width: 100%;
+        min-width: unset;
+        max-width: 100%;
+        padding: 14px 15px;
+        font-size: 15px;
+        margin: 0;
+    }
+    
+    .team-card {
+        width: 160px;
+        padding: 15px 10px;
+    }
+    
+    .team-card-avatar {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .team-card-name {
+        font-size: 18px;
+    }
+    
+    .title-card {
+        width: 160px;
+    }
+    
+    .title-card-image {
+        height: 220px;
+    }
+    
+    .character-card {
+        width: 140px;
+    }
+    
+    .character-image {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .nav-button {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+    
+    .navigation-buttons {
+        padding: 12px;
+        margin: 15px 0;
+    }
+    
+    .episode-item {
+        flex-wrap: wrap;
+    }
+    
+    .episode-button {
+        width: 100%;
+        margin-top: 8px;
+    }
+}
+.season-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #001a8c;
+    border-left: 5px solid #320063;
+    padding-left: 15px;
+    font-size: 22px;
+}
+
+.season-badge {
+    background: linear-gradient(135deg, #001a8c, #320063);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 25px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+.news-header {
+            background: linear-gradient(135deg, #ae0000, #000000);
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .news-header h1 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .news-header p {
+            color: rgba(255,255,255,0.8);
+        }
+.new-content-box {
+            background: linear-gradient(135deg, #810000d1, #000000d1);
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
