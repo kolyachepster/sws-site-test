@@ -189,6 +189,34 @@
             margin: 20px 0;
         }
         
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ae0000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-container {
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+        }
+        
+        .error-container h2 {
+            color: #ff4444;
+            margin-bottom: 20px;
+        }
+        
         @media (max-width: 768px) {
             .profile-layout {
                 grid-template-columns: 1fr;
@@ -228,8 +256,8 @@
         </div>
         
         <div class="content-box" id="profileContent">
-            <div class="loading" style="text-align: center; padding: 50px;">
-                <div style="border: 5px solid #f3f3f3; border-top: 5px solid #ae0000; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto;"></div>
+            <div style="text-align: center; padding: 50px;">
+                <div class="loading-spinner"></div>
                 <p>Загрузка профиля...</p>
             </div>
         </div>
@@ -245,13 +273,6 @@
         </div>
         <p style="font-size: 14px; color: #666;">© 2026 SWS - Sound Wave Studio. Все права защищены.</p>
     </div>
-
-    <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
     
     <script type="module">
         const profileContent = document.getElementById('profileContent');
@@ -261,13 +282,32 @@
             
             if (!user) {
                 profileContent.innerHTML = `
-                    <div class="login-container" style="max-width: 400px; margin: 0 auto; text-align: center; padding: 40px;">
-                        <h2 style="color: #ae0000;">🔐 Требуется авторизация</h2>
+                    <div class="error-container">
+                        <h2>🔐 Требуется авторизация</h2>
                         <p style="margin: 20px 0;">Войдите в свой аккаунт, чтобы просмотреть профиль</p>
                         <a href="login.html" class="btn" style="display: inline-block; text-decoration: none;">Войти</a>
                         <a href="index.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">На главную</a>
                     </div>
                 `;
+                return;
+            }
+            
+            // Проверяем подтверждение email
+            if (!user.emailVerified) {
+                profileContent.innerHTML = `
+                    <div class="error-container">
+                        <h2>📧 Email не подтверждён</h2>
+                        <p style="margin: 20px 0;">Пожалуйста, подтвердите свой email, перейдя по ссылке в письме, которое было отправлено при регистрации.</p>
+                        <p style="margin: 10px 0; color: #ffaa00;">Не получили письмо? Проверьте папку "Спам" или нажмите кнопку ниже.</p>
+                        <button id="resendEmailBtn" class="btn" style="background: #ffaa00; color: #ae0000;">Отправить письмо повторно</button>
+                        <a href="login.html" class="btn" style="display: inline-block; text-decoration: none; background: #222; margin-left: 10px;">Выйти</a>
+                    </div>
+                `;
+                
+                document.getElementById('resendEmailBtn')?.addEventListener('click', async () => {
+                    await user.sendEmailVerification();
+                    alert('Письмо для подтверждения отправлено! Проверьте почту.');
+                });
                 return;
             }
             
@@ -278,23 +318,23 @@
                 <div class="profile-layout">
                     <aside class="sidebar">
                         <img src="${userData?.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${userData?.nickname || user.email}`}" class="profile-avatar" onerror="this.src='https://via.placeholder.com/130/ae0000/ffffff'">
-                        <h2 id="u-nick">${userData?.nickname || user.email?.split('@')[0]}</h2>
+                        <h2 id="u-nick">${escapeHtml(userData?.nickname || user.email?.split('@')[0])}</h2>
                         <p style="color: var(--accent); font-size: 11px; font-weight: 800; margin-bottom: 20px;">${isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА"}</p>
                         
                         <div class="stat-grid">
                             <div class="stat-card">
-                                <span class="stat-val" id="s-views">${userData?.views || 0}</span>
+                                <span class="stat-val">${userData?.views || 0}</span>
                                 <span class="stat-lab">Проектов</span>
                             </div>
                             <div class="stat-card">
-                                <span class="stat-val" id="s-date">${userData?.regDate || "--"}</span>
+                                <span class="stat-val">${userData?.regDate || "--"}</span>
                                 <span class="stat-lab">Рег.</span>
                             </div>
                         </div>
                         
-                        <div class="ach-list" id="u-ach-box">
+                        <div class="ach-list">
                             ${isAdmin ? '<span class="badge gold">🛡️ Основатель</span>' : ''}
-                            ${userData?.achievements?.map(a => `<span class="badge">${a}</span>`).join('') || ''}
+                            ${userData?.achievements?.map(a => `<span class="badge">${escapeHtml(a)}</span>`).join('') || ''}
                         </div>
                         
                         <button class="btn btn-logout" id="btn-logout">Выход</button>
@@ -303,8 +343,8 @@
                     <div class="main-content">
                         <div class="info-block">
                             <h3 style="margin-bottom:20px">Настройки профиля</h3>
-                            <input type="text" id="set-nick" placeholder="Никнейм" value="${userData?.nickname || ''}">
-                            <input type="text" id="set-ava" placeholder="URL аватара" value="${userData?.avatar || ''}">
+                            <input type="text" id="set-nick" placeholder="Никнейм" value="${escapeHtml(userData?.nickname || '')}">
+                            <input type="text" id="set-ava" placeholder="URL аватара" value="${escapeHtml(userData?.avatar || '')}">
                             <button class="btn" id="save-profile">Сохранить изменения</button>
                         </div>
                         
@@ -349,9 +389,12 @@
             
             // Привязываем обработчики
             document.getElementById('save-profile')?.addEventListener('click', async () => {
+                const newNick = document.getElementById('set-nick').value;
+                const newAvatar = document.getElementById('set-ava').value;
+                
                 await window.firebase.updateProfile(user.uid, {
-                    nickname: document.getElementById('set-nick').value,
-                    avatar: document.getElementById('set-ava').value
+                    nickname: newNick,
+                    avatar: newAvatar
                 });
                 alert("Сохранено!");
                 loadProfile();
@@ -371,15 +414,43 @@
                     const email = document.getElementById('ach-user-email').value;
                     let ach = document.getElementById('ach-select').value;
                     if (ach === 'CUSTOM') ach = document.getElementById('ach-custom').value;
+                    if (!email || !ach) {
+                        alert('Заполните все поля');
+                        return;
+                    }
                     const result = await window.firebase.giveAchievement(email, ach);
                     alert(result.success ? "Достижение выдано!" : result.error);
+                    if (result.success) {
+                        document.getElementById('ach-user-email').value = '';
+                        document.getElementById('ach-custom').value = '';
+                    }
                 });
                 
                 document.getElementById('add-title')?.addEventListener('click', async () => {
+                    const name = document.getElementById('t-name').value;
+                    const image = document.getElementById('t-img').value;
+                    const videoUrl = document.getElementById('t-link').value;
+                    
+                    if (!name || !image || !videoUrl) {
+                        alert('Заполните все поля');
+                        return;
+                    }
+                    
                     const result = await window.firebase.addTitle({
-                        name: document.getElementById('t-name').value,
-                        image: document.getElementById('t-img').value,
-                        videoUrl: document.getElementById('t-link').value
+                        name: name,
+                        name_en: name,
+                        image: image,
+                        poster: image,
+                        type: 'ongoing',
+                        year: new Date().getFullYear(),
+                        episodes_count: 0,
+                        seasons: 1,
+                        rating: 0,
+                        genres: [],
+                        description: 'Описание скоро появится',
+                        videoUrl: videoUrl,
+                        characters: [],
+                        episodes: []
                     });
                     alert(result.success ? "Тайтл добавлен!" : result.error);
                     if (result.success) {
@@ -390,11 +461,25 @@
                 });
                 
                 document.getElementById('add-member')?.addEventListener('click', async () => {
+                    const name = document.getElementById('m-name').value;
+                    const role = document.getElementById('m-role').value;
+                    const image = document.getElementById('m-img').value;
+                    
+                    if (!name || !role || !image) {
+                        alert('Заполните все поля');
+                        return;
+                    }
+                    
                     const result = await window.firebase.addTeamMember({
-                        name: document.getElementById('m-name').value,
-                        status: document.getElementById('m-role').value,
-                        image: document.getElementById('m-img').value,
-                        categories: ['main']
+                        id: name.toLowerCase().replace(/\s/g, '_'),
+                        name: name,
+                        name_en: name,
+                        image: image,
+                        status: role,
+                        joinDate: new Date().getFullYear().toString(),
+                        bio: 'Описание скоро появится',
+                        categories: ['main'],
+                        social: {}
                     });
                     alert(result.success ? "Участник добавлен!" : result.error);
                     if (result.success) {
@@ -404,6 +489,13 @@
                     }
                 });
             }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         document.addEventListener('DOMContentLoaded', loadProfile);

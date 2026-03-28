@@ -6,7 +6,8 @@ import {
     createUserWithEmailAndPassword, 
     signOut, 
     onAuthStateChanged, 
-    sendEmailVerification 
+    sendEmailVerification,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { 
     getFirestore, 
@@ -53,6 +54,17 @@ function isUserAdmin() {
 async function login(email, password) {
     try {
         const result = await signInWithEmailAndPassword(auth, email, password);
+        
+        // Проверяем, подтверждён ли email
+        if (!result.user.emailVerified) {
+            await sendEmailVerification(result.user);
+            await signOut(auth);
+            return { 
+                success: false, 
+                error: "Email не подтверждён! Проверьте почту и подтвердите регистрацию." 
+            };
+        }
+        
         return { success: true, user: result.user };
     } catch (error) {
         return { success: false, error: error.message };
@@ -62,7 +74,11 @@ async function login(email, password) {
 async function register(email, password) {
     try {
         const result = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Отправляем письмо для подтверждения
         await sendEmailVerification(result.user);
+        
+        // Создаём запись в Firestore
         await setDoc(doc(db, "users", result.user.uid), {
             email: email,
             nickname: email.split('@')[0],
@@ -70,9 +86,17 @@ async function register(email, password) {
             regDate: new Date().toLocaleDateString('ru-RU'),
             views: 0,
             avatar: "",
-            achievements: ["🚀 Первооткрыватель"]
+            achievements: ["🚀 Первооткрыватель"],
+            emailVerified: false
         });
-        return { success: true, user: result.user };
+        
+        // Выходим, чтобы пользователь не мог войти без подтверждения
+        await signOut(auth);
+        
+        return { 
+            success: true, 
+            message: "Регистрация успешна! На вашу почту отправлено письмо для подтверждения. После подтверждения войдите снова." 
+        };
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -98,6 +122,13 @@ async function getUserData(uid) {
 
 async function updateProfile(uid, data) {
     await updateDoc(doc(db, "users", uid), data);
+    
+    // Обновляем displayName в Auth
+    if (data.nickname && auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+            displayName: data.nickname
+        });
+    }
 }
 
 // ============ ФУНКЦИИ ДЛЯ ОБНОВЛЕНИЯ КНОПКИ ПРОФИЛЯ ============
@@ -285,6 +316,21 @@ async function giveAchievement(email, achievement) {
     }
 }
 
+// ============ ФУНКЦИЯ ДЛЯ ПРОВЕРКИ АВТОРИЗАЦИИ ============
+async function checkAuthAndLoadProfile() {
+    const user = auth.currentUser;
+    if (!user) return null;
+    
+    // Проверяем, подтверждён ли email
+    if (!user.emailVerified) {
+        await signOut(auth);
+        return { error: "Email не подтверждён. Проверьте почту." };
+    }
+    
+    const userData = await getUserData(user.uid);
+    return { user, userData };
+}
+
 // Слушатель авторизации
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
@@ -293,8 +339,22 @@ onAuthStateChanged(auth, async (user) => {
     updateProfileButton(user);
     
     if (user) {
+        // Проверяем подтверждение email
+        if (!user.emailVerified) {
+            await signOut(auth);
+            updateProfileButton(null);
+            return;
+        }
+        
         const userData = await getUserData(user.uid);
         isAdmin = userData?.role === 'admin';
+        
+        // Обновляем запись в Firestore, если email подтверждён
+        if (userData && !userData.emailVerified) {
+            await updateDoc(doc(db, "users", user.uid), {
+                emailVerified: true
+            });
+        }
         
         // Показываем админ-панель если есть
         const adminPanel = document.getElementById('admin-panel');
@@ -338,7 +398,8 @@ window.firebase = {
     searchTitles,
     searchTeam,
     giveAchievement,
-    updateProfileButton
+    updateProfileButton,
+    checkAuthAndLoadProfile
 };
 
 console.log('✅ Firebase инициализирован');

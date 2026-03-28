@@ -60,15 +60,31 @@
         
         .error-message {
             color: #ff4444;
-            font-size: 12px;
+            font-size: 13px;
             margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255,68,68,0.1);
+            border-radius: 8px;
             display: none;
         }
         
         .success-message {
             color: #44ff44;
-            font-size: 12px;
+            font-size: 13px;
             margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(68,255,68,0.1);
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .info-message {
+            color: #ffaa00;
+            font-size: 13px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255,170,0,0.1);
+            border-radius: 8px;
             display: none;
         }
         
@@ -77,6 +93,22 @@
             margin-top: 20px;
             color: #ae0000;
             text-decoration: none;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -96,6 +128,7 @@
             
             <div id="errorMsg" class="error-message"></div>
             <div id="successMsg" class="success-message"></div>
+            <div id="infoMsg" class="info-message"></div>
             
             <input type="email" id="email" placeholder="Email" autocomplete="email">
             <input type="password" id="password" placeholder="Пароль" autocomplete="current-password">
@@ -119,23 +152,48 @@
         const registerBtn = document.getElementById('registerBtn');
         const errorMsg = document.getElementById('errorMsg');
         const successMsg = document.getElementById('successMsg');
+        const infoMsg = document.getElementById('infoMsg');
+        
+        let isLoading = false;
         
         function showError(message) {
             errorMsg.textContent = message;
             errorMsg.style.display = 'block';
             successMsg.style.display = 'none';
+            infoMsg.style.display = 'none';
             setTimeout(() => {
                 errorMsg.style.display = 'none';
-            }, 3000);
+            }, 5000);
         }
         
         function showSuccess(message) {
             successMsg.textContent = message;
             successMsg.style.display = 'block';
             errorMsg.style.display = 'none';
+            infoMsg.style.display = 'none';
             setTimeout(() => {
                 successMsg.style.display = 'none';
-            }, 3000);
+            }, 5000);
+        }
+        
+        function showInfo(message) {
+            infoMsg.textContent = message;
+            infoMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            setTimeout(() => {
+                infoMsg.style.display = 'none';
+            }, 5000);
+        }
+        
+        function setLoading(button, loading) {
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading-spinner"></span> Загрузка...';
+            } else {
+                button.disabled = false;
+                button.innerHTML = button === loginBtn ? 'Войти' : 'Зарегистрироваться';
+            }
         }
         
         loginBtn.addEventListener('click', async () => {
@@ -147,7 +205,12 @@
                 return;
             }
             
+            setLoading(loginBtn, true);
+            
             const result = await window.firebase.login(email, password);
+            
+            setLoading(loginBtn, false);
+            
             if (result.success) {
                 showSuccess('Вход выполнен! Перенаправление...');
                 setTimeout(() => {
@@ -172,9 +235,14 @@
                 return;
             }
             
+            setLoading(registerBtn, true);
+            
             const result = await window.firebase.register(email, password);
+            
+            setLoading(registerBtn, false);
+            
             if (result.success) {
-                showSuccess('Регистрация успешна! Проверьте почту для подтверждения. Теперь войдите.');
+                showInfo('📧 Регистрация успешна! На вашу почту отправлено письмо для подтверждения. После подтверждения войдите снова.');
                 emailInput.value = '';
                 passwordInput.value = '';
             } else {
@@ -183,7 +251,8 @@
         });
         
         // Проверка авторизации - если уже залогинен, перенаправляем в профиль
-        if (window.firebase?.getCurrentUser()) {
+        const user = window.firebase?.getCurrentUser();
+        if (user && user.emailVerified) {
             window.location.href = 'profile.html';
         }
     </script>
