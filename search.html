@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поиск - SWS</title>
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="firebase-config.js"></script>
+    <script src="data.js"></script>
     <style>
         .search-header {
             background: linear-gradient(135deg, #ae0000, #000000);
@@ -48,6 +48,11 @@
             transition: all 0.3s;
         }
         
+        .search-button-large:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+        
         .search-tabs {
             display: flex;
             gap: 10px;
@@ -69,9 +74,17 @@
             border-radius: 25px;
         }
         
+        .search-tab:hover {
+            color: #ae0000;
+        }
+        
         .search-tab.active {
             background: #ae0000;
             color: white;
+        }
+        
+        .results-section {
+            margin-top: 20px;
         }
         
         .results-grid {
@@ -95,6 +108,7 @@
         
         .result-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
         .result-card-image {
@@ -111,6 +125,18 @@
             font-size: 16px;
             font-weight: bold;
             color: #ae0000;
+            margin-bottom: 5px;
+        }
+        
+        .result-card-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .result-card-role {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
         }
         
         .voice-card {
@@ -123,12 +149,13 @@
             margin-bottom: 15px;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #eee;
             transition: transform 0.3s;
+            border: 1px solid #eee;
         }
         
         .voice-card:hover {
             transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .voice-card-avatar {
@@ -138,10 +165,19 @@
             object-fit: cover;
         }
         
+        .voice-card-info {
+            flex: 1;
+        }
+        
         .voice-card-name {
             font-size: 18px;
             font-weight: bold;
             color: #ae0000;
+        }
+        
+        .voice-card-roles {
+            font-size: 13px;
+            color: #666;
         }
         
         .search-stats {
@@ -150,12 +186,18 @@
             border-radius: 10px;
             margin-bottom: 20px;
             color: #666;
+            font-size: 14px;
         }
         
         .no-results {
             text-align: center;
             padding: 60px 20px;
             color: #999;
+        }
+        
+        .no-results h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
         }
         
         .highlight {
@@ -170,26 +212,41 @@
             color: #ae0000;
             margin-top: 20px;
             margin-bottom: 15px;
+            font-size: 20px;
             border-left: 4px solid #ae0000;
             padding-left: 15px;
         }
         
+        .search-suggestion {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
         @media (max-width: 768px) {
-            .result-card { width: 160px; }
-            .result-card-image { height: 220px; }
-            .search-box-large { flex-direction: column; }
+            .result-card {
+                width: 160px;
+            }
+            .result-card-image {
+                height: 220px;
+            }
+            .search-box-large {
+                flex-direction: column;
+            }
+            .search-button-large {
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="navigation-buttons">
-    <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
-    <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
-    <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
-    <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
-    <a href="profile.html" id="navProfileBtn" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%); display: none;">👤 Профиль</a>
-</div>
+            <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
+            <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
+            <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
+            <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
+        </div>
     </div>
     
     <div class="container">
@@ -199,7 +256,7 @@
                 <input type="text" id="searchInput" class="search-input-large" placeholder="Название тайтла, имя даббера, персонаж..." autocomplete="off">
                 <button class="search-button-large" onclick="performSearch()">Найти</button>
             </div>
-            <div class="search-suggestion" style="font-size: 12px; color: #999; margin-top: 10px;">💡 Поддерживается поиск на русском и английском языках</div>
+            <div class="search-suggestion">💡 Поддерживается поиск на русском и английском языках</div>
         </div>
         
         <div class="content-box" id="searchResults">
@@ -210,8 +267,14 @@
                 <button class="search-tab" data-tab="characters">👥 Персонажи</button>
             </div>
             <div id="resultsContainer">
-                <div class="search-stats">Введите запрос для поиска</div>
-                <div class="no-results"><h3>🔎 Начните поиск</h3><p>Введите название тайтла, имя даббера или персонажа</p></div>
+                <div class="search-stats">
+                    Введите запрос для поиска
+                </div>
+                <div class="no-results">
+                    <h3>🔎 Начните поиск</h3>
+                    <p>Введите название тайтла, имя даббера или персонажа</p>
+                    <p style="font-size: 14px; margin-top: 10px;">Поддерживается русский и английский язык</p>
+                </div>
             </div>
         </div>
     </div>
@@ -226,83 +289,172 @@
         </div>
         <p style="font-size: 14px; color: #666;">© 2026 SWS - Sound Wave Studio. Все права защищены.</p>
     </div>
-
-    <script type="module">
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        
+    
+    <script>
         let currentTab = 'all';
         let currentQuery = '';
-        let searchResults = { titles: [], voices: [], characters: [] };
-        let allTitles = [];
-        let allTeam = [];
+        let searchResults = {
+            titles: [],
+            voices: [],
+            characters: []
+        };
         
-        const db = window.firebase?.db;
+        // Функция для транслитерации (простая версия)
+        function transliterate(text) {
+            const cyrillicToLatin = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z',
+                'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r',
+                'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+                'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'Zh', 'З': 'Z',
+                'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R',
+                'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'H', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Sch',
+                'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
+            };
+            
+            let result = '';
+            for (let char of text) {
+                result += cyrillicToLatin[char] || char;
+            }
+            return result;
+        }
         
+        // Функция для нормализации текста (удаление знаков препинания, приведение к нижнему регистру)
         function normalizeText(text) {
             if (!text) return '';
-            return text.toLowerCase().replace(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/g, ' ').trim();
+            return text.toLowerCase()
+                .replace(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/g, ' ')
+                .trim();
         }
         
-        function matchesQuery(text, query) {
+        // Расширенная функция для проверки соответствия запросу (с поддержкой транслитерации)
+        function matchesQueryAdvanced(text, query) {
             if (!text || !query) return false;
-            return normalizeText(text).includes(normalizeText(query));
-        }
-        
-        function highlightMatches(text, query) {
-            if (!text || !query) return escapeHtml(text);
-            const word = normalizeText(query);
-            const regex = new RegExp(`(${word})`, 'gi');
-            return escapeHtml(text).replace(regex, '<span class="highlight">$1</span>');
-        }
-        
-        async function loadData() {
-            if (!db) return;
             
-            const titlesSnap = await getDocs(collection(db, "titles"));
-            allTitles = [];
-            titlesSnap.forEach(doc => allTitles.push({ id: doc.id, ...doc.data() }));
+            const normalizedText = normalizeText(text);
+            const normalizedQuery = normalizeText(query);
             
-            const teamSnap = await getDocs(collection(db, "team"));
-            allTeam = [];
-            teamSnap.forEach(doc => allTeam.push({ id: doc.id, ...doc.data() }));
-        }
-        
-        function searchTitles(query) {
-            return allTitles.filter(title => 
-                matchesQuery(title.name, query) || 
-                matchesQuery(title.name_en, query) ||
-                matchesQuery(title.description, query)
-            ).map(title => ({ ...title, highlightName: highlightMatches(title.name, query) }));
-        }
-        
-        function searchVoices(query) {
-            return allTeam.filter(voice => 
-                matchesQuery(voice.name, query) || 
-                matchesQuery(voice.name_en, query) ||
-                matchesQuery(voice.status, query)
-            ).map(voice => ({ ...voice, highlightName: highlightMatches(voice.name, query) }));
-        }
-        
-        function searchCharacters(query) {
-            const characters = [];
-            allTitles.forEach(title => {
-                title.characters?.forEach(character => {
-                    if (matchesQuery(character.name, query) || matchesQuery(character.name_en, query)) {
-                        characters.push({
-                            ...character,
-                            titleName: title.name,
-                            titleId: title.id,
-                            highlightName: highlightMatches(character.name, query)
-                        });
-                    }
-                });
+            // Разбиваем запрос на слова
+            const queryWords = normalizedQuery.split(' ');
+            
+            // Проверяем каждое слово
+            return queryWords.every(word => {
+                if (word.length === 0) return true;
+                
+                // Прямое совпадение
+                if (normalizedText.includes(word)) return true;
+                
+                // Проверка транслитерации (русский -> английский)
+                const transliteratedWord = transliterate(word);
+                if (transliteratedWord && normalizedText.includes(transliteratedWord)) return true;
+                
+                // Проверка обратной транслитерации (английский -> русский)
+                // Для этого нужно проверить, есть ли в тексте слово, которое транслитерируется в искомое
+                const textWords = normalizedText.split(' ');
+                for (let textWord of textWords) {
+                    const transliteratedTextWord = transliterate(textWord);
+                    if (transliteratedTextWord === word) return true;
+                }
+                
+                return false;
             });
+        }
+        
+        // Функция для подсветки совпадений (с поддержкой транслитерации)
+        function highlightMatchesAdvanced(text, query) {
+            if (!text || !query) return escapeHtml(text);
+            
+            const normalizedQuery = normalizeText(query);
+            const queryWords = normalizedQuery.split(' ').filter(w => w.length > 0);
+            
+            let result = escapeHtml(text);
+            const lowerResult = result.toLowerCase();
+            
+            queryWords.forEach(word => {
+                // Ищем прямые совпадения
+                const regex = new RegExp(`(${word})`, 'gi');
+                result = result.replace(regex, '<span class="highlight">$1</span>');
+                
+                // Ищем совпадения через транслитерацию
+                const transliteratedWord = transliterate(word);
+                if (transliteratedWord && transliteratedWord !== word) {
+                    const regex2 = new RegExp(`(${transliteratedWord})`, 'gi');
+                    result = result.replace(regex2, '<span class="highlight">$1</span>');
+                }
+            });
+            
+            return result;
+        }
+        
+        // Поиск по тайтлам
+        function searchTitles(query) {
+            if (!window.titlesDatabase) return [];
+            
+            return window.titlesDatabase.filter(title => {
+                const nameMatch = matchesQueryAdvanced(title.name, query);
+                const nameEnMatch = title.name_en ? matchesQueryAdvanced(title.name_en, query) : false;
+                const descMatch = title.description ? matchesQueryAdvanced(title.description, query) : false;
+                
+                return nameMatch || nameEnMatch || descMatch;
+            }).map(title => ({
+                ...title,
+                matchField: 'title',
+                highlightName: highlightMatchesAdvanced(title.name, query)
+            }));
+        }
+        
+        // Поиск по дабберам (с поддержкой русского и английского)
+        function searchVoices(query) {
+            if (!window.teamDatabase) return [];
+            
+            return window.teamDatabase.filter(voice => {
+                const nameMatch = matchesQueryAdvanced(voice.name, query);
+                const nameEnMatch = voice.name_en ? matchesQueryAdvanced(voice.name_en, query) : false;
+                const statusMatch = voice.status ? matchesQueryAdvanced(voice.status, query) : false;
+                const bioMatch = voice.bio ? matchesQueryAdvanced(voice.bio, query) : false;
+                
+                return nameMatch || nameEnMatch || statusMatch || bioMatch;
+            }).map(voice => ({
+                ...voice,
+                matchField: 'voice',
+                highlightName: highlightMatchesAdvanced(voice.name, query)
+            }));
+        }
+        
+        // Поиск по персонажам (с поддержкой русского и английского)
+        function searchCharacters(query) {
+            if (!window.titlesDatabase) return [];
+            
+            const characters = [];
+            
+            window.titlesDatabase.forEach(title => {
+                if (title.characters && title.characters.length > 0) {
+                    title.characters.forEach(character => {
+                        const nameMatch = matchesQueryAdvanced(character.name, query);
+                        const nameEnMatch = character.name_en ? matchesQueryAdvanced(character.name_en, query) : false;
+                        const voiceMatch = character.voiceName ? matchesQueryAdvanced(character.voiceName, query) : false;
+                        
+                        if (nameMatch || nameEnMatch || voiceMatch) {
+                            characters.push({
+                                ...character,
+                                titleName: title.name,
+                                titleId: title.id,
+                                matchField: 'character',
+                                highlightName: highlightMatchesAdvanced(character.name, query),
+                                highlightVoice: highlightMatchesAdvanced(character.voiceName, query)
+                            });
+                        }
+                    });
+                }
+            });
+            
             return characters;
         }
         
-        async function performSearch() {
-            const input = document.getElementById('searchInput');
-            const query = input.value.trim();
+        // Функция поиска
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.trim();
             currentQuery = query;
             
             if (!query) {
@@ -310,143 +462,255 @@
                 return;
             }
             
-            await loadData();
-            
+            // Выполняем поиск
             searchResults.titles = searchTitles(query);
             searchResults.voices = searchVoices(query);
             searchResults.characters = searchCharacters(query);
             
-            const total = searchResults.titles.length + searchResults.voices.length + searchResults.characters.length;
-            document.querySelector('.search-stats').innerHTML = `🔍 Найдено: ${total} результатов (тайтлов: ${searchResults.titles.length}, дабберов: ${searchResults.voices.length}, персонажей: ${searchResults.characters.length})`;
+            const totalResults = searchResults.titles.length + searchResults.voices.length + searchResults.characters.length;
             
+            // Обновляем статистику
+            const statsDiv = document.querySelector('.search-stats');
+            if (statsDiv) {
+                statsDiv.innerHTML = `🔍 Найдено: ${totalResults} результатов (тайтлов: ${searchResults.titles.length}, дабберов: ${searchResults.voices.length}, персонажей: ${searchResults.characters.length})`;
+            }
+            
+            // Отображаем результаты в зависимости от выбранной вкладки
             displayResultsByTab();
         }
         
+        // Отображение результатов по вкладке
         function displayResultsByTab() {
             const container = document.getElementById('resultsContainer');
-            if (currentTab === 'all') displayAllResults(container);
-            else if (currentTab === 'titles') displayTitlesResults(container);
-            else if (currentTab === 'voices') displayVoicesResults(container);
-            else if (currentTab === 'characters') displayCharactersResults(container);
+            
+            if (!container) return;
+            
+            if (currentTab === 'all') {
+                displayAllResults(container);
+            } else if (currentTab === 'titles') {
+                displayTitlesResults(container);
+            } else if (currentTab === 'voices') {
+                displayVoicesResults(container);
+            } else if (currentTab === 'characters') {
+                displayCharactersResults(container);
+            }
         }
         
+        // Отображение всех результатов
         function displayAllResults(container) {
-            let html = `<div class="search-stats">${document.querySelector('.search-stats').innerHTML}</div>`;
+            let html = '';
             
-            if (searchResults.titles.length) {
-                html += `<h3 class="section-title">🎬 Тайтлы (${searchResults.titles.length})</h3><div class="results-grid">`;
+            // Сохраняем статистику
+            const statsDiv = document.querySelector('.search-stats');
+            if (statsDiv) {
+                html += `<div class="search-stats">${statsDiv.innerHTML}</div>`;
+            }
+            
+            // Тайтлы
+            if (searchResults.titles.length > 0) {
+                html += `<h3 class="section-title">🎬 Тайтлы (${searchResults.titles.length})</h3>`;
+                html += `<div class="results-grid">`;
                 searchResults.titles.forEach(title => {
-                    let statusText = title.type === 'movie' ? '🎬 Фильм' : title.type === 'ongoing' ? '🔄 Онгоинг' : '✅ Завершён';
-                    html += `<a href="title.html?id=${title.id}" class="result-card">
-                        <img src="${title.image}" class="result-card-image" onerror="this.src='https://via.placeholder.com/200x280/ae0000/ffffff'">
+                    let statusText = '';
+                    if (title.type === 'movie') statusText = '🎬 Фильм';
+                    else if (title.type === 'ongoing') statusText = '🔄 Онгоинг';
+                    else if (title.type === 'completed') statusText = '✅ Завершён';
+                    
+                    html += `
+                        <a href="title.html?id=${title.id}" class="result-card">
+                            <img src="${title.image}" alt="${title.name}" class="result-card-image" onerror="this.src='https://via.placeholder.com/200x280/ae0000/ffffff?text=${encodeURIComponent(title.name)}'">
+                            <div class="result-card-info">
+                                <div class="result-card-name">${title.highlightName}</div>
+                                <div class="result-card-meta">📅 ${title.year} | ⭐ ${title.rating}</div>
+                                <div class="result-card-meta">${statusText}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            // Дабберы
+            if (searchResults.voices.length > 0) {
+                html += `<h3 class="section-title">🎭 Дабберы (${searchResults.voices.length})</h3>`;
+                searchResults.voices.forEach(voice => {
+                    html += `
+                        <a href="voice.html?id=${voice.id}" class="voice-card">
+                            <img src="${voice.image}" alt="${voice.name}" class="voice-card-avatar" onerror="this.src='https://via.placeholder.com/60/ae0000/ffffff?text=${voice.name.charAt(0)}'">
+                            <div class="voice-card-info">
+                                <div class="voice-card-name">${voice.highlightName}</div>
+                                <div class="voice-card-roles">${escapeHtml(voice.status || 'Актёр дубляжа')}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+            }
+            
+            // Персонажи
+            if (searchResults.characters.length > 0) {
+                html += `<h3 class="section-title">👥 Персонажи (${searchResults.characters.length})</h3>`;
+                searchResults.characters.forEach(character => {
+                    html += `
+                        <a href="title.html?id=${character.titleId}" class="voice-card">
+                            <div class="voice-card-info">
+                                <div class="voice-card-name">${character.highlightName}</div>
+                                <div class="voice-card-roles">🎬 ${escapeHtml(character.titleName)}</div>
+                                <div class="voice-card-roles">🎙️ Озвучивает: ${character.highlightVoice || escapeHtml(character.voiceName)}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+            }
+            
+            if (searchResults.titles.length === 0 && searchResults.voices.length === 0 && searchResults.characters.length === 0) {
+                html = `
+                    <div class="search-stats">🔍 Найдено: 0 результатов</div>
+                    <div class="no-results">
+                        <h3>😕 Ничего не найдено</h3>
+                        <p>По запросу "${escapeHtml(currentQuery)}" ничего не найдено</p>
+                        <p>Попробуйте изменить запрос или использовать другие ключевые слова</p>
+                        <p style="margin-top: 10px;">💡 Подсказка: можно искать на русском или английском языке</p>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Отображение только тайтлов
+        function displayTitlesResults(container) {
+            let html = '';
+            
+            const statsDiv = document.querySelector('.search-stats');
+            if (statsDiv) {
+                html += `<div class="search-stats">${statsDiv.innerHTML}</div>`;
+            }
+            
+            if (searchResults.titles.length === 0) {
+                html += `
+                    <div class="no-results">
+                        <h3>😕 Тайтлы не найдены</h3>
+                        <p>По запросу "${escapeHtml(currentQuery)}" тайтлы не найдены</p>
+                    </div>
+                `;
+                container.innerHTML = html;
+                return;
+            }
+            
+            html += `<div class="results-grid">`;
+            searchResults.titles.forEach(title => {
+                let statusText = '';
+                if (title.type === 'movie') statusText = '🎬 Фильм';
+                else if (title.type === 'ongoing') statusText = '🔄 Онгоинг';
+                else if (title.type === 'completed') statusText = '✅ Завершён';
+                
+                html += `
+                    <a href="title.html?id=${title.id}" class="result-card">
+                        <img src="${title.image}" alt="${title.name}" class="result-card-image" onerror="this.src='https://via.placeholder.com/200x280/ae0000/ffffff?text=${encodeURIComponent(title.name)}'">
                         <div class="result-card-info">
                             <div class="result-card-name">${title.highlightName}</div>
                             <div class="result-card-meta">📅 ${title.year} | ⭐ ${title.rating}</div>
                             <div class="result-card-meta">${statusText}</div>
                         </div>
-                    </a>`;
-                });
-                html += `</div>`;
-            }
-            
-            if (searchResults.voices.length) {
-                html += `<h3 class="section-title">🎭 Дабберы (${searchResults.voices.length})</h3>`;
-                searchResults.voices.forEach(voice => {
-                    html += `<a href="voice.html?id=${voice.id}" class="voice-card">
-                        <img src="${voice.image}" class="voice-card-avatar" onerror="this.src='https://via.placeholder.com/60/ae0000/ffffff'">
-                        <div class="voice-card-info">
-                            <div class="voice-card-name">${voice.highlightName}</div>
-                            <div class="voice-card-roles">${escapeHtml(voice.status)}</div>
-                        </div>
-                    </a>`;
-                });
-            }
-            
-            if (searchResults.characters.length) {
-                html += `<h3 class="section-title">👥 Персонажи (${searchResults.characters.length})</h3>`;
-                searchResults.characters.forEach(char => {
-                    html += `<a href="title.html?id=${char.titleId}" class="voice-card">
-                        <div class="voice-card-info">
-                            <div class="voice-card-name">${char.highlightName}</div>
-                            <div class="voice-card-roles">🎬 ${escapeHtml(char.titleName)}</div>
-                            <div class="voice-card-roles">🎙️ ${escapeHtml(char.voiceName)}</div>
-                        </div>
-                    </a>`;
-                });
-            }
-            
-            if (searchResults.titles.length === 0 && searchResults.voices.length === 0 && searchResults.characters.length === 0) {
-                html = `<div class="search-stats">🔍 Найдено: 0 результатов</div>
-                        <div class="no-results"><h3>😕 Ничего не найдено</h3><p>По запросу "${escapeHtml(currentQuery)}" ничего не найдено</p></div>`;
-            }
-            
-            container.innerHTML = html;
-        }
-        
-        function displayTitlesResults(container) {
-            let html = `<div class="search-stats">${document.querySelector('.search-stats').innerHTML}</div>`;
-            if (searchResults.titles.length === 0) {
-                container.innerHTML = html + `<div class="no-results"><h3>😕 Тайтлы не найдены</h3></div>`;
-                return;
-            }
-            html += `<div class="results-grid">`;
-            searchResults.titles.forEach(title => {
-                let statusText = title.type === 'movie' ? '🎬 Фильм' : title.type === 'ongoing' ? '🔄 Онгоинг' : '✅ Завершён';
-                html += `<a href="title.html?id=${title.id}" class="result-card">
-                    <img src="${title.image}" class="result-card-image" onerror="this.src='https://via.placeholder.com/200x280/ae0000/ffffff'">
-                    <div class="result-card-info">
-                        <div class="result-card-name">${title.highlightName}</div>
-                        <div class="result-card-meta">📅 ${title.year} | ⭐ ${title.rating}</div>
-                        <div class="result-card-meta">${statusText}</div>
-                    </div>
-                </a>`;
+                    </a>
+                `;
             });
             html += `</div>`;
             container.innerHTML = html;
         }
         
+        // Отображение только дабберов
         function displayVoicesResults(container) {
-            let html = `<div class="search-stats">${document.querySelector('.search-stats').innerHTML}</div>`;
+            let html = '';
+            
+            const statsDiv = document.querySelector('.search-stats');
+            if (statsDiv) {
+                html += `<div class="search-stats">${statsDiv.innerHTML}</div>`;
+            }
+            
             if (searchResults.voices.length === 0) {
-                container.innerHTML = html + `<div class="no-results"><h3>😕 Дабберы не найдены</h3></div>`;
+                html += `
+                    <div class="no-results">
+                        <h3>😕 Дабберы не найдены</h3>
+                        <p>По запросу "${escapeHtml(currentQuery)}" дабберы не найдены</p>
+                        <p>💡 Попробуйте поискать на русском или английском языке</p>
+                    </div>
+                `;
+                container.innerHTML = html;
                 return;
             }
+            
             searchResults.voices.forEach(voice => {
-                html += `<a href="voice.html?id=${voice.id}" class="voice-card">
-                    <img src="${voice.image}" class="voice-card-avatar" onerror="this.src='https://via.placeholder.com/60/ae0000/ffffff'">
-                    <div class="voice-card-info">
-                        <div class="voice-card-name">${voice.highlightName}</div>
-                        <div class="voice-card-roles">${escapeHtml(voice.status)}</div>
-                    </div>
-                </a>`;
+                html += `
+                    <a href="voice.html?id=${voice.id}" class="voice-card">
+                        <img src="${voice.image}" alt="${voice.name}" class="voice-card-avatar" onerror="this.src='https://via.placeholder.com/60/ae0000/ffffff?text=${voice.name.charAt(0)}'">
+                        <div class="voice-card-info">
+                            <div class="voice-card-name">${voice.highlightName}</div>
+                            <div class="voice-card-roles">${escapeHtml(voice.status || 'Актёр дубляжа')}</div>
+                        </div>
+                    </a>
+                `;
             });
             container.innerHTML = html;
         }
         
+        // Отображение только персонажей
         function displayCharactersResults(container) {
-            let html = `<div class="search-stats">${document.querySelector('.search-stats').innerHTML}</div>`;
+            let html = '';
+            
+            const statsDiv = document.querySelector('.search-stats');
+            if (statsDiv) {
+                html += `<div class="search-stats">${statsDiv.innerHTML}</div>`;
+            }
+            
             if (searchResults.characters.length === 0) {
-                container.innerHTML = html + `<div class="no-results"><h3>😕 Персонажи не найдены</h3></div>`;
+                html += `
+                    <div class="no-results">
+                        <h3>😕 Персонажи не найдены</h3>
+                        <p>По запросу "${escapeHtml(currentQuery)}" персонажи не найдены</p>
+                        <p>💡 Попробуйте поискать на русском или английском языке</p>
+                    </div>
+                `;
+                container.innerHTML = html;
                 return;
             }
-            searchResults.characters.forEach(char => {
-                html += `<a href="title.html?id=${char.titleId}" class="voice-card">
-                    <div class="voice-card-info">
-                        <div class="voice-card-name">${char.highlightName}</div>
-                        <div class="voice-card-roles">🎬 ${escapeHtml(char.titleName)}</div>
-                        <div class="voice-card-roles">🎙️ ${escapeHtml(char.voiceName)}</div>
-                    </div>
-                </a>`;
+            
+            searchResults.characters.forEach(character => {
+                html += `
+                    <a href="title.html?id=${character.titleId}" class="voice-card">
+                        <div class="voice-card-info">
+                            <div class="voice-card-name">${character.highlightName}</div>
+                            <div class="voice-card-roles">🎬 ${escapeHtml(character.titleName)}</div>
+                            <div class="voice-card-roles">🎙️ Озвучивает: ${character.highlightVoice || escapeHtml(character.voiceName)}</div>
+                        </div>
+                    </a>
+                `;
             });
             container.innerHTML = html;
         }
         
+        // Пустое состояние
         function displayEmptyState() {
             const container = document.getElementById('resultsContainer');
-            container.innerHTML = `<div class="search-stats">Введите запрос для поиска</div>
-                <div class="no-results"><h3>🔎 Начните поиск</h3><p>Введите название тайтла, имя даббера или персонажа</p></div>`;
+            container.innerHTML = `
+                <div class="search-stats">Введите запрос для поиска</div>
+                <div class="no-results">
+                    <h3>🔎 Начните поиск</h3>
+                    <p>Введите название тайтла, имя даббера или персонажа</p>
+                    <p style="font-size: 14px; margin-top: 10px;">Поддерживается русский и английский язык</p>
+                    <p style="font-size: 12px; margin-top: 5px;">💡 Примеры: "Атака Титанов", "Attack on Titan", "Раскольников", "Raskolnikov"</p>
+                </div>
+            `;
         }
         
+        // Обработка Enter
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        }
+        
+        // Экранирование HTML
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -454,19 +718,26 @@
             return div.innerHTML;
         }
         
+        // Инициализация
         function init() {
-            document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', handleKeyPress);
+            }
             
+            // Получаем параметр q из URL
             const urlParams = new URLSearchParams(window.location.search);
-            const query = urlParams.get('q');
-            if (query) {
-                document.getElementById('searchInput').value = query;
+            const queryParam = urlParams.get('q');
+            if (queryParam && searchInput) {
+                searchInput.value = queryParam;
                 performSearch();
             }
             
-            document.querySelectorAll('.search-tab').forEach(tab => {
+            // Обработка вкладок
+            const tabs = document.querySelectorAll('.search-tab');
+            tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
-                    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+                    tabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     currentTab = this.dataset.tab;
                     displayResultsByTab();
@@ -474,7 +745,6 @@
             });
         }
         
-        window.performSearch = performSearch;
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

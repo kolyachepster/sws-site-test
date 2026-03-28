@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Тайтл - SWS</title>
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="firebase-config.js"></script>
+    <script src="data.js"></script>
     <style>
         .anime-header {
             display: flex;
@@ -218,12 +218,11 @@
 <body>
     <div class="container">
         <div class="navigation-buttons">
-    <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
-    <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
-    <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
-    <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
-    <a href="profile.html" id="navProfileBtn" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%); display: none;">👤 Профиль</a>
-</div>
+            <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
+            <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
+            <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
+            <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
+        </div>
         
         <div style="margin-top: 15px; display: flex; justify-content: center;">
             <form action="search.html" method="get" style="display: flex; width: 100%; max-width: 500px; gap: 10px;">
@@ -259,31 +258,22 @@
             <a href="index.html" style="color: #ae0000; text-decoration: none;">Главная</a>
             <a href="titles.html" style="color: #ae0000; text-decoration: none;">Тайтлы</a>
             <a href="sostav.html" style="color: #ae0000; text-decoration: none;">Состав</a>
-            <a href="privacy.html" style="color: #ae0000; text-decoration: none;">Политика</a>
+            <a href="privacy.html" style="color: #ae0000; text-decoration: none;">Политика конфиденциальности</a>
         </div>
         <p style="font-size: 14px; color: #666;">© 2026 SWS - Sound Wave Studio. Все права защищены.</p>
     </div>
 
-    <script type="module">
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        
+    <script>
         let currentEpisode = 1;
         let currentTitle = null;
-        
-        const db = window.firebase?.db;
         
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
         
-        async function getTitleById(id) {
-            const docRef = doc(db, "titles", id);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                return { id: docSnap.id, ...docSnap.data() };
-            }
-            return null;
+        function getTitleById(id) {
+            return window.titlesDatabase.find(title => title.id === id);
         }
         
         function groupEpisodesBySeason(episodes, episodesPerSeason = 25) {
@@ -296,7 +286,7 @@
             return seasons;
         }
         
-        async function displayTitlePage() {
+        function displayTitlePage() {
             const titleId = getUrlParameter('id');
             
             if (!titleId) {
@@ -310,7 +300,7 @@
                 return;
             }
             
-            currentTitle = await getTitleById(titleId);
+            currentTitle = getTitleById(titleId);
             
             if (!currentTitle) {
                 document.getElementById('title-content').innerHTML = `

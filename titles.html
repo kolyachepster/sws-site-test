@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тайтлы SWS</title>
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="firebase-config.js"></script>
+    <script src="data.js"></script>
     <style>
         .titles-grid {
             display: flex;
@@ -274,13 +274,13 @@
 </head>
 <body>
     <div class="container">
+        <div class="news-header">
         <div class="navigation-buttons">
-    <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
-    <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
-    <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
-    <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
-    <a href="profile.html" id="navProfileBtn" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%); display: none;">👤 Профиль</a>
-</div>
+            <a href="index.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🏠 Главная</a>
+            <a href="titles.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎦 Тайтлы</a>
+            <a href="sostav.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">🎭 Состав</a>
+            <a href="news.html" class="nav-button" style="background: linear-gradient(135deg, #ae0000 0%, #000000 100%);">📰 Новости</a>
+        </div>
         
         <div style="margin-top: 15px; display: flex; justify-content: center;">
             <form action="search.html" method="get" style="display: flex; width: 100%; max-width: 500px; gap: 10px;">
@@ -292,19 +292,20 @@
                 </button>
             </form>
         </div>
+        </div>
     </div>
     
     <div class="container">
         <div class="header">
+            <h1 class="title">Наши тайтлы</h1>
             <a href="index.html">
                 <img src="logo.jpg" alt="Логотип SWS" class="avatar" width="240" height="240" onerror="this.src='https://via.placeholder.com/240/ae0000/ffffff?text=SWS'">
             </a>
-            <h1 class="title">Наши тайтлы</h1>
             <p class="text">Обложки кликабельны (ведут на страницу тайтла)</p>
             <hr>
         </div>
         
-        <div class="content-box">
+        <div class="new-content-box">
             <div class="filters-section">
                 <div class="filter-group">
                     <span class="filter-title">📺 Тип тайтла:</span>
@@ -400,88 +401,114 @@
             <a href="index.html" style="color: #ae0000; text-decoration: none;">Главная</a>
             <a href="titles.html" style="color: #ae0000; text-decoration: none;">Тайтлы</a>
             <a href="sostav.html" style="color: #ae0000; text-decoration: none;">Состав</a>
-            <a href="privacy.html" style="color: #ae0000; text-decoration: none;">Политика</a>
+            <a href="privacy.html" style="color: #ae0000; text-decoration: none;">Политика конфиденциальности</a>
         </div>
         <p style="font-size: 14px; color: #666;">© 2026 SWS - Sound Wave Studio. Все права защищены.</p>
     </div>
 
-    <script type="module">
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        
+    <script>
         let currentTypeFilter = 'all';
         let currentYearFilter = 'all';
         let currentSeasonsMin = 0;
-        let currentSeasonsMax = Infinity;
+        let currentSeasonsMax = 0;
         let currentEpisodesMin = 0;
-        let currentEpisodesMax = Infinity;
+        let currentEpisodesMax = 0;
         let currentRatingMin = 0;
-        let currentRatingMax = 10;
+        let currentRatingMax = 0;
         
-        let allTitles = [];
         let maxSeasons = 0;
         let maxEpisodes = 0;
         let maxRating = 10;
         
-        const db = window.firebase?.db;
-        
-        async function loadAllTitles() {
-            if (!db) return [];
-            const snap = await getDocs(collection(db, "titles"));
-            const titles = [];
-            snap.forEach(doc => {
-                titles.push({ id: doc.id, ...doc.data() });
+        function getMaxValuesFromDatabase() {
+            if (!window.titlesDatabase || window.titlesDatabase.length === 0) {
+                return { maxSeasons: 0, maxEpisodes: 0, maxRating: 10 };
+            }
+            
+            let maxSeasonsVal = 0;
+            let maxEpisodesVal = 0;
+            let maxRatingVal = 0;
+            
+            window.titlesDatabase.forEach(title => {
+                if (title.seasons > maxSeasonsVal) maxSeasonsVal = title.seasons;
+                if (title.episodes_count > maxEpisodesVal) maxEpisodesVal = title.episodes_count;
+                if (title.rating > maxRatingVal) maxRatingVal = title.rating;
             });
-            return titles;
+            
+            return {
+                maxSeasons: maxSeasonsVal,
+                maxEpisodes: maxEpisodesVal,
+                maxRating: Math.ceil(maxRatingVal * 10) / 10
+            };
         }
         
-        async function init() {
-            allTitles = await loadAllTitles();
+        function updateMaxHints() {
+            const values = getMaxValuesFromDatabase();
+            maxSeasons = values.maxSeasons;
+            maxEpisodes = values.maxEpisodes;
+            maxRating = values.maxRating;
             
-            // Вычисляем максимальные значения
-            allTitles.forEach(title => {
-                if (title.seasons > maxSeasons) maxSeasons = title.seasons;
-                if (title.episodes_count > maxEpisodes) maxEpisodes = title.episodes_count;
-                if (title.rating > maxRating) maxRating = title.rating;
-            });
+            const seasonsMaxInput = document.getElementById('seasonsMax');
+            const episodesMaxInput = document.getElementById('episodesMax');
+            const ratingMaxInput = document.getElementById('ratingMax');
+            
+            if (seasonsMaxInput) {
+                seasonsMaxInput.max = maxSeasons;
+                seasonsMaxInput.placeholder = maxSeasons;
+                seasonsMaxInput.value = maxSeasons;
+            }
+            if (episodesMaxInput) {
+                episodesMaxInput.max = maxEpisodes;
+                episodesMaxInput.placeholder = maxEpisodes;
+                episodesMaxInput.value = maxEpisodes;
+            }
+            if (ratingMaxInput) {
+                ratingMaxInput.max = maxRating;
+                ratingMaxInput.placeholder = maxRating;
+                ratingMaxInput.value = maxRating;
+            }
+            
+            const seasonsHint = document.getElementById('seasonsHint');
+            const episodesHint = document.getElementById('episodesHint');
+            const ratingHint = document.getElementById('ratingHint');
+            
+            if (seasonsHint) seasonsHint.textContent = `Макс: ${maxSeasons}`;
+            if (episodesHint) episodesHint.textContent = `Макс: ${maxEpisodes}`;
+            if (ratingHint) ratingHint.textContent = `Макс: ${maxRating}`;
             
             currentSeasonsMax = maxSeasons;
             currentEpisodesMax = maxEpisodes;
             currentRatingMax = maxRating;
             
-            // Обновляем UI
-            document.getElementById('seasonsMax').max = maxSeasons;
-            document.getElementById('seasonsMax').placeholder = maxSeasons;
-            document.getElementById('seasonsMax').value = maxSeasons;
-            document.getElementById('seasonsHint').textContent = `Макс: ${maxSeasons}`;
-            
-            document.getElementById('episodesMax').max = maxEpisodes;
-            document.getElementById('episodesMax').placeholder = maxEpisodes;
-            document.getElementById('episodesMax').value = maxEpisodes;
-            document.getElementById('episodesHint').textContent = `Макс: ${maxEpisodes}`;
-            
-            document.getElementById('ratingMax').max = maxRating;
-            document.getElementById('ratingMax').placeholder = maxRating;
-            document.getElementById('ratingMax').value = maxRating;
-            document.getElementById('ratingHint').textContent = `Макс: ${maxRating}`;
-            
-            // Заполняем года
-            const years = [...new Set(allTitles.map(t => t.year))].sort((a,b) => b - a);
+            document.getElementById('seasonsMin').value = 0;
+            document.getElementById('episodesMin').value = 0;
+            document.getElementById('ratingMin').value = 0;
+        }
+        
+        function updateYearSelect() {
+            if (!window.titlesDatabase) return;
+            const years = [...new Set(window.titlesDatabase.map(title => title.year))].sort((a, b) => b - a);
             const yearSelect = document.getElementById('yearSelect');
-            years.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearSelect.appendChild(option);
-            });
-            
-            displayTitles();
-            setupFilters();
+            if (yearSelect) {
+                yearSelect.innerHTML = '<option value="all">Все года</option>';
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+            }
         }
         
         function displayTitles() {
             const container = document.getElementById('titles-container');
             
-            let filteredTitles = allTitles.filter(title => {
+            if (!window.titlesDatabase || window.titlesDatabase.length === 0) {
+                container.innerHTML = '<div class="loading">Нет данных о тайтлах</div>';
+                return;
+            }
+            
+            let filteredTitles = window.titlesDatabase.filter(title => {
                 if (currentTypeFilter !== 'all') {
                     if (currentTypeFilter === 'multi-season') {
                         if (title.seasons < 2) return false;
@@ -499,7 +526,7 @@
                 return true;
             });
             
-            document.getElementById('totalCount').textContent = allTitles.length;
+            document.getElementById('totalCount').textContent = window.titlesDatabase.length;
             document.getElementById('displayedCount').textContent = filteredTitles.length;
             
             if (filteredTitles.length === 0) {
@@ -565,7 +592,8 @@
                     btn.classList.remove('active');
                 }
             });
-            document.getElementById('yearSelect').value = currentYearFilter;
+            const yearSelect = document.getElementById('yearSelect');
+            if (yearSelect) yearSelect.value = currentYearFilter;
         }
         
         function getRangeValues() {
@@ -628,6 +656,13 @@
             
             document.getElementById('applyRangeFilters').addEventListener('click', applyRangeFilters);
             document.getElementById('resetFilters').addEventListener('click', resetAllFilters);
+        }
+        
+        function init() {
+            updateMaxHints();
+            updateYearSelect();
+            setupFilters();
+            displayTitles();
         }
         
         document.addEventListener('DOMContentLoaded', init);
